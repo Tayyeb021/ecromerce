@@ -7,13 +7,32 @@ dist
   
 # misc
 package.json.bak
-.DS_Store
 
 # IDE
 .vs/
+.idea/
+*.swp
+*.swo
+*~
 
-# config file
+# OS
+.DS_Store
+Thumbs.db
+
+# archives
+*.zip
+*.tar.gz
+*.rar
+
+# config / env
 .env
+.env.local
+.env.*.local
+
+# coverage & test
+coverage/
+.nyc_output/
+*.lcov
 
 # debug
 npm-debug.log*
