@@ -19,3 +19,15 @@ yarn-error.log*
 
 # uploads
 server/uploads 
+server/node_modules
+node_modules/client
+server/dist
+server/build
+server/logs
+server/temp
+server/uploads
+server/outputs
+server/static
+server/nextjs-build
+server/nextjs-assets
+server/nextjs-assets
