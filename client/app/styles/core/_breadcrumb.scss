@@ -1,0 +1,84 @@
+// Breadcrumb Styles
+.breadcrumb-wrapper {
+  background: linear-gradient(135deg, rgba(41, 98, 255, 0.05) 0%, rgba(30, 136, 229, 0.08) 100%);
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(41, 98, 255, 0.1);
+  margin-bottom: 30px;
+
+  .breadcrumb-nav {
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      align-items: center;
+      background: transparent;
+      border-radius: 0;
+
+      .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: $font-subtext-color;
+
+        &:not(:last-child)::after {
+          content: '/';
+          margin: 0 12px;
+          color: rgba(41, 98, 255, 0.4);
+          font-weight: 500;
+        }
+
+        a {
+          color: rgba(41, 98, 255, 0.8);
+          text-decoration: none;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          &:hover {
+            color: #2962ff;
+            text-decoration: underline;
+          }
+
+          .fa-home {
+            font-size: 16px;
+          }
+        }
+
+        &.active {
+          color: $theme-black;
+          font-weight: 600;
+
+          span {
+            color: $theme-black;
+          }
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-down(sm) {
+    padding: 12px 0;
+    margin-bottom: 20px;
+
+    .breadcrumb-nav .breadcrumb {
+      font-size: 13px;
+
+      .breadcrumb-item {
+        &:not(:last-child)::after {
+          margin: 0 8px;
+        }
+
+        a {
+          gap: 4px;
+
+          .fa-home {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}

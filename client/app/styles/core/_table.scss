@@ -1,0 +1,78 @@
+// Professional Table Styles
+
+.table-section {
+  background: $white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  .search {
+    margin: 0 0 24px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .search-label {
+      width: 100%;
+    }
+  }
+
+  .react-bootstrap-table {
+    .table {
+      overflow-x: auto;
+      display: block;
+      margin: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      color: $font-custom-color;
+      background: $white;
+
+      thead {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+        th {
+          font-weight: 600;
+          color: $theme-black;
+          padding: 16px;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+          text-transform: uppercase;
+          font-size: 12px;
+          letter-spacing: 0.5px;
+          white-space: nowrap;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: all 0.2s ease;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+          &:hover {
+            background: rgba(41, 98, 255, 0.03);
+            transform: scale(1.01);
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          td {
+            padding: 16px;
+            color: $font-custom-color;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow-wrap: break-word;
+            width: auto;
+          }
+        }
+      }
+
+      td,
+      th {
+        white-space: nowrap;
+        text-overflow: unset;
+        overflow-wrap: break-word;
+      }
+    }
+  }
+}

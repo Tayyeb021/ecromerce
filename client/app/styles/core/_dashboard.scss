@@ -1,0 +1,453 @@
+// Professional Dashboard Styles
+
+.admin,
+.merchant,
+.customer {
+  background: #f5f7fa;
+  min-height: 100vh;
+  padding: 30px 0;
+
+  @include media-breakpoint-down(md) {
+    padding: 20px 0;
+  }
+}
+
+.panel-body {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  min-height: 600px;
+
+  @include media-breakpoint-down(sm) {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 8px;
+  }
+}
+
+.panel-sidebar {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  @include media-breakpoint-down(md) {
+    margin-bottom: 20px;
+  }
+
+  .panel-title,
+  .menu-panel {
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+    color: $white;
+    font-weight: 600;
+    font-size: 18px;
+    border: none;
+  }
+
+  .menu-panel {
+    display: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 12px 12px 0 0;
+
+    @include media-breakpoint-down(sm) {
+      display: block;
+    }
+
+    &.collapse {
+      border-bottom: none;
+
+      &:hover {
+        background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
+      }
+    }
+  }
+
+  .panel-title {
+    background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+    padding: 24px 20px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(41, 98, 255, 0.2);
+
+    @include media-breakpoint-down(sm) {
+      display: none;
+    }
+  }
+
+  .navbar {
+    padding: 0;
+    background: transparent;
+  }
+
+  .panel-links {
+    width: 100%;
+    margin: 0;
+    padding: 8px 0;
+    list-style: none;
+
+    li {
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      margin: 0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: linear-gradient(90deg, rgba(41, 98, 255, 0.05) 0%, rgba(41, 98, 255, 0.02) 100%);
+        transform: translateX(4px);
+
+        a {
+          color: $primary-color !important;
+        }
+      }
+
+      a {
+        display: flex;
+        align-items: center;
+        padding: 16px 24px;
+        text-transform: capitalize;
+        color: $font-custom-color !important;
+        font-weight: $font-weight-medium;
+        font-size: 15px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        &.active-link {
+          font-weight: $font-weight-semibold;
+          background: linear-gradient(90deg, rgba(41, 98, 255, 0.1) 0%, rgba(41, 98, 255, 0.05) 100%);
+          color: $primary-color !important;
+          border-left: 4px solid $primary-color;
+
+          &::before {
+            opacity: 1;
+          }
+        }
+
+        &:hover {
+          color: $primary-color !important;
+        }
+      }
+    }
+  }
+}
+
+// Enhanced SubPage Styles
+.sub-page {
+  .subpage-header {
+    @include flex();
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 30px;
+    background: $white;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 2px solid rgba(41, 98, 255, 0.1);
+    margin: -30px -30px 30px -30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    @include media-breakpoint-down(sm) {
+      padding: 20px;
+      margin: -20px -20px 20px -20px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: $theme-black;
+      background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+
+      @include media-breakpoint-down(sm) {
+        font-size: 24px;
+      }
+    }
+
+    .action {
+      .btn {
+        background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+        color: $white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(41, 98, 255, 0.4);
+        }
+      }
+    }
+
+    .fa {
+      cursor: pointer;
+      border-radius: 50%;
+      background-color: rgba(41, 98, 255, 0.1);
+      color: $primary-color;
+      font-size: $font-size-huge !important;
+      padding: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(41, 98, 255, 0.2);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .subpage-body {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+// Account Details Styles
+.account-details {
+  .info {
+    background: linear-gradient(135deg, rgba(41, 98, 255, 0.05) 0%, rgba(30, 136, 229, 0.05) 100%);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(41, 98, 255, 0.1);
+
+    .desc {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      p {
+        font-size: 16px;
+        font-weight: 600;
+        color: $theme-black;
+        margin: 0;
+      }
+
+      .provider-email {
+        color: $primary-color;
+      }
+    }
+  }
+
+  form {
+    background: $white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    hr {
+      margin: 30px 0;
+      border: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+
+      .btn {
+        padding: 12px 32px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+}
+
+// Enhanced Input Styles for Dashboard
+.panel-body {
+  .input-box {
+    margin: 20px 0;
+
+    label {
+      font-weight: 600;
+      color: $theme-black;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    input[type='text'],
+    input[type='number'],
+    input[type='password'],
+    input[type='email'],
+    textarea {
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: $white;
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.1);
+        outline: none;
+      }
+
+      &:hover {
+        border-color: rgba(41, 98, 255, 0.3);
+      }
+    }
+  }
+}
+
+// Table Enhancements
+.table-section {
+  background: $white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  .search {
+    margin: 0 0 24px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .search-label {
+      width: 100%;
+    }
+  }
+
+  .react-bootstrap-table {
+    .table {
+      margin: 0;
+      border-radius: 8px;
+      overflow: hidden;
+
+      thead {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+        th {
+          font-weight: 600;
+          color: $theme-black;
+          padding: 16px;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+          text-transform: uppercase;
+          font-size: 12px;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: all 0.2s ease;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+          &:hover {
+            background: rgba(41, 98, 255, 0.03);
+            transform: scale(1.01);
+          }
+
+          td {
+            padding: 16px;
+            color: $font-custom-color;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Product Dashboard Styles
+.product-dashboard {
+  .p-list {
+    .product-box {
+      background: $white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: rgba(41, 98, 255, 0.2);
+      }
+
+      .item-image {
+        width: 120px;
+        min-width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .product-desc {
+        @include text-ellipsis(2);
+      }
+    }
+  }
+}
+
+// Responsive Design
+@include media-breakpoint-down(sm) {
+  .admin,
+  .merchant,
+  .customer {
+    padding: 15px 0;
+  }
+
+  .panel-body {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .panel-sidebar {
+    border-radius: 8px;
+
+    .panel-links li a {
+      padding: 14px 20px;
+      font-size: 14px;
+    }
+  }
+}

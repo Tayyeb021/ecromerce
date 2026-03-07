@@ -1,0 +1,88 @@
+<svg width="260" height="70" viewBox="0 0 260 70" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Premium multi-color gradient for badge -->
+    <linearGradient id="badgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2962ff;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#1e88e5;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#1565c0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Vibrant text gradient -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2c3e50;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2962ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Enhanced shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Outer glow circle -->
+  <circle cx="35" cy="35" r="28" fill="#2962ff" opacity="0.15" filter="url(#shadow)"/>
+  
+  <!-- Badge with premium gradient and shadow -->
+  <circle cx="35" cy="35" r="24" fill="url(#badgeGradient)" filter="url(#shadow)"/>
+  
+  <!-- Inner highlight ring for 3D effect -->
+  <circle cx="35" cy="35" r="24" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="35" cy="32" r="18" fill="#ffffff" opacity="0.1"/>
+  
+  <!-- A-Z text with enhanced styling -->
+  <text x="35" y="40" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2.5" filter="url(#glow)">A-Z</text>
+  
+  <!-- Main brand name with vibrant gradient -->
+  <text x="72" y="36" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="32" font-weight="800" fill="url(#textGradient)" letter-spacing="0.8">On-Buz</text>
+  
+  <!-- Elegant double underline with gradient -->
+  <path d="M 72 43 Q 130 45 190 43" fill="none" stroke="#2962ff" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+  <path d="M 72 47 Q 130 49 190 47" fill="none" stroke="#1e88e5" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Premium shopping cart icon with style -->
+  <g transform="translate(200, 20)">
+    <!-- Cart with gradient -->
+    <defs>
+      <linearGradient id="cartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#2962ff;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#1e88e5;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    
+    <!-- Cart handle -->
+    <path d="M 0 12 L 0 6 Q 0 3 3 3 L 9 3 Q 12 3 12 6 L 12 12" fill="none" stroke="url(#cartGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Cart body -->
+    <path d="M 2.5 12 L 2.5 22 L 9.5 22 L 9.5 12" fill="none" stroke="url(#cartGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Handle detail -->
+    <path d="M 4 15 L 8 15" stroke="url(#cartGradient)" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Shopping indicator badge with glow -->
+    <circle cx="11" cy="6" r="3.5" fill="#ff5252" filter="url(#glow)"/>
+    <circle cx="11" cy="6" r="2" fill="#ffffff"/>
+    
+    <!-- Sparkle effect -->
+    <circle cx="6" cy="8" r="1" fill="#ffd700" opacity="0.8"/>
+    <circle cx="9" cy="19" r="0.8" fill="#ffd700" opacity="0.8"/>
+  </g>
+</svg>

@@ -1,0 +1,151 @@
+// overrides styles
+
+// start bootstrap overrides
+.form-control {
+  height: auto;
+
+  &:focus {
+    box-shadow: $box-shadow;
+  }
+}
+
+.dropdown-item {
+  font-weight: $font-weight-medium !important;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+  color: $font-custom-color;
+  font-size: 15px;
+
+  &:focus {
+    outline: none;
+    background: rgba(41, 98, 255, 0.1);
+    color: $primary-color;
+  }
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(41, 98, 255, 0.1) 0%, rgba(41, 98, 255, 0.05) 100%);
+    color: $primary-color;
+    transform: translateX(4px);
+  }
+
+  &:active {
+    background: linear-gradient(90deg, rgba(41, 98, 255, 0.15) 0%, rgba(41, 98, 255, 0.1) 100%);
+    color: $primary-color;
+  }
+
+  &.active {
+    background: linear-gradient(90deg, rgba(41, 98, 255, 0.15) 0%, rgba(41, 98, 255, 0.1) 100%);
+    font-weight: $font-weight-semibold !important;
+    color: $primary-color;
+  }
+
+  a {
+    display: block;
+    padding: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.dropdown-menu {
+  position: absolute !important;
+  z-index: 1001;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  font-size: unset;
+  border-radius: 12px;
+  background: $white;
+  min-width: 200px;
+  margin-top: 8px;
+}
+
+.dropdown,
+.btn-group {
+  &.show {
+    .nav-link {
+      .dropdown-caret {
+        transform: rotate(180deg);
+        -webkit-transition: $layout-transition-speed;
+        transition: $layout-transition-speed;
+      }
+    }
+  }
+
+  .nav-link {
+    .dropdown-caret {
+      font-size: $font-size-x-small !important;
+      color: $theme-dark-gray;
+      margin-left: 5px;
+      -webkit-transition: $layout-transition-speed;
+      transition: $layout-transition-speed;
+    }
+  }
+}
+
+.btn {
+  &:hover {
+    color: $white !important;
+  }
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+hr {
+  border-color: $border-color-primary;
+}
+
+.lead {
+  font-size: $font-size-medium;
+}
+// end bootstrap overrides
+
+// start react-notification-system-redux overrides
+.notification {
+  .notification-title {
+    font-weight: $font-weight-normal !important;
+  }
+}
+// end react-notification-system-redux overrides
+
+// start carousel styles
+.carousel-container {
+  .react-multiple-carousel__arrow {
+    z-index: 900;
+  }
+
+  .carousel-dot-list-style {
+    .react-multi-carousel-dot {
+      button {
+        border-color: $border-color-primary;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .react-multi-carousel-dot--active {
+      button {
+        background-color: $secondary-bg;
+      }
+    }
+  }
+}
+
+// end carousel styles
+
+// start popover styles
+.popover {
+  border-color: $border-color-default;
+  font-family: $font-family;
+}
+
+.popover-header {
+  font-size: $font-size-medium !important;
+  background-color: $secondary-bg;
+}
+// end popover styles
