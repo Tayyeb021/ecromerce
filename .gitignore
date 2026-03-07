@@ -9,6 +9,9 @@ dist
 package.json.bak
 .DS_Store
 
+# IDE
+.vs/
+
 # config file
 .env
 
