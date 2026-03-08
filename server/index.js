@@ -34,7 +34,7 @@ app.use(cors({
       'http://127.0.0.1:8084',        // Localhost alternative
       'http://127.0.0.1:3000',        // Localhost alternative
       'https://a-z-on-buz.com',       // Production frontend
-      'https://www.a-z-on-buz.com'    // Production with www
+      'https://ecromerce-production.up.railway.app'    // Production with www
     ];
 
     // Allow if origin is in the list or if in development mode

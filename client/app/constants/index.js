@@ -3,7 +3,7 @@ export const API_URL = process.env.API_URL || 'https://a-z-on-buz.com/api';
 
 export const SOCKET_URL =
   window.location.host.indexOf('localhost') >= 0
-    ? 'http://127.0.0.1:3000'
+    ? 'http://ecromerce-production.up.railway.app'
     : window.location.host;
 
 export const ROLES = {

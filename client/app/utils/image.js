@@ -25,7 +25,7 @@ const getBaseUrl = () => {
   
   // Fallback to localhost for development
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return 'http://localhost:3000';
+    return 'http://ecromerce-production.up.railway.app';
   }
   
   // Fallback: try to construct from current window location
