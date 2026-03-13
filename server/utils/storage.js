@@ -10,6 +10,36 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// Max dimension (longest side) for product images - prevents huge uploads from breaking layout
+const PRODUCT_IMAGE_MAX_DIMENSION = 1200;
+
+// Resize image buffer if too large; returns buffer to write (resized or original)
+async function resizeImageIfNeeded(buffer, mimeType) {
+  if (!buffer || buffer.length === 0) return buffer;
+  const isImage = /^image\/(jpeg|jpg|png|webp|gif)$/i.test(mimeType || '');
+  if (!isImage) return buffer;
+  try {
+    const sharp = require('sharp');
+    const metadata = await sharp(buffer).metadata();
+    const { width = 0, height = 0 } = metadata;
+    if (width <= PRODUCT_IMAGE_MAX_DIMENSION && height <= PRODUCT_IMAGE_MAX_DIMENSION) {
+      return buffer;
+    }
+    const resized = await sharp(buffer)
+      .resize({
+        width: PRODUCT_IMAGE_MAX_DIMENSION,
+        height: PRODUCT_IMAGE_MAX_DIMENSION,
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .toBuffer();
+    return resized;
+  } catch (err) {
+    console.warn('Image resize skipped (using original):', err.message);
+    return buffer;
+  }
+}
+
 // Helper function to generate unique filename
 const generateFileName = (originalName) => {
   const timestamp = Date.now();
@@ -30,9 +60,10 @@ exports.s3Upload = async image => {
     if (image) {
       const fileName = generateFileName(image.originalname);
       const filePath = path.join(uploadsDir, fileName);
-      
-      // Write file to local directory
-      fs.writeFileSync(filePath, image.buffer);
+      const bufferToWrite = await resizeImageIfNeeded(image.buffer, image.mimetype);
+
+      // Write file to local directory (resized if it was a large image)
+      fs.writeFileSync(filePath, bufferToWrite);
       
       // Store relative path - frontend will construct full URL
       const relativePath = `/uploads/products/${fileName}`;
@@ -67,17 +98,18 @@ exports.s3UploadMultiple = async images => {
 
         const fileName = generateFileName(image.originalname);
         const filePath = path.join(uploadsDir, fileName);
-        
+        const bufferToWrite = await resizeImageIfNeeded(image.buffer, image.mimetype);
+
         console.log(`Saving image ${index}: ${fileName} to ${filePath}`);
-        
+
         // Ensure directory exists
         if (!fs.existsSync(uploadsDir)) {
           fs.mkdirSync(uploadsDir, { recursive: true });
           console.log(`Created upload directory: ${uploadsDir}`);
         }
-        
-        // Write file to local directory
-        fs.writeFileSync(filePath, image.buffer);
+
+        // Write file to local directory (resized if it was a large image)
+        fs.writeFileSync(filePath, bufferToWrite);
         
         // Verify file was written
         if (!fs.existsSync(filePath)) {

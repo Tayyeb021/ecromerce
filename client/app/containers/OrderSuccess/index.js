@@ -20,6 +20,10 @@ class OrderSuccess extends React.PureComponent {
     if (this.props.authenticated && id) {
       this.props.fetchOrder(id);
     }
+    // Guest: clear cart when they land on success page so cart is always empty after checkout
+    if (!this.props.authenticated && id && this.props.clearCart) {
+      this.props.clearCart();
+    }
   }
 
   componentDidUpdate(prevProps) {
