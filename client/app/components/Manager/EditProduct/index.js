@@ -99,6 +99,7 @@ const EditProduct = props => {
                 productChange(name, value);
               }}
             />
+            <small className='form-text text-muted'>No character limit.</small>
           </Col>
           <Col xs='12' lg='6'>
             <Input

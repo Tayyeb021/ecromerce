@@ -11,6 +11,100 @@ const gmail = require('../../services/gmail');
 const store = require('../../utils/store');
 const { ROLES, CART_ITEM_STATUS } = require('../../constants');
 
+// Guest checkout: POST /api/order/guest (no auth), body: email, address, phone, firstName?, lastName?, products, total, shippingOption
+router.post('/guest', async (req, res) => {
+  try {
+    const { email, firstName, lastName, address, phone, products: items, total, shippingOption } = req.body;
+
+    if (!email || !items || !Array.isArray(items) || items.length === 0 || total == null) {
+      return res.status(400).json({
+        error: 'Email and cart products are required.'
+      });
+    }
+    const addressTrimmed = address != null ? String(address).trim() : '';
+    const phoneTrimmed = phone != null ? String(phone).trim() : '';
+    if (!addressTrimmed || !phoneTrimmed) {
+      return res.status(400).json({
+        error: 'Address and phone number are required.'
+      });
+    }
+
+    const products = store.caculateItemsSalesTax(items);
+
+    const cart = new Cart({
+      user: null,
+      products
+    });
+    const cartDoc = await cart.save();
+
+    // Decrease product inventory
+    const decreaseQuantity = (prods) => {
+      const bulkOptions = prods.map((item) => ({
+        updateOne: {
+          filter: { _id: item.product },
+          update: { $inc: { quantity: -item.quantity } }
+        }
+      }));
+      return Product.bulkWrite(bulkOptions);
+    };
+    await decreaseQuantity(products);
+
+    const order = new Order({
+      cart: cartDoc._id,
+      user: null,
+      guestEmail: email.trim(),
+      guestFirstName: firstName ? firstName.trim() : null,
+      guestLastName: lastName ? lastName.trim() : null,
+      guestAddress: addressTrimmed,
+      guestPhone: phoneTrimmed,
+      total: Number(total),
+      shippingOption: shippingOption ? {
+        name: shippingOption.name,
+        cost: shippingOption.cost != null ? Number(shippingOption.cost) : 0,
+        deliveryTime: shippingOption.deliveryTime
+      } : null
+    });
+    const orderDoc = await order.save();
+
+    const cartDocPopulated = await Cart.findById(orderDoc.cart._id).populate({
+      path: 'products.product',
+      populate: { path: 'brand' }
+    });
+
+    const newOrder = {
+      _id: orderDoc._id,
+      created: orderDoc.created,
+      user: { email: orderDoc.guestEmail, firstName: orderDoc.guestFirstName, lastName: orderDoc.guestLastName },
+      total: orderDoc.total,
+      products: cartDocPopulated.products,
+      shippingOption: orderDoc.shippingOption
+    };
+    const orderWithTax = store.caculateTaxAmount(newOrder);
+
+    try {
+      await gmail.sendEmail(
+        orderDoc.guestEmail,
+        'order-confirmation',
+        null,
+        orderWithTax
+      );
+    } catch (emailErr) {
+      console.error('Guest order confirmation email error:', emailErr);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Your order has been placed successfully!',
+      order: { _id: orderDoc._id }
+    });
+  } catch (error) {
+    console.error('Guest order error:', error);
+    res.status(400).json({
+      error: 'Your request could not be processed. Please try again.'
+    });
+  }
+});
+
 router.post('/add', auth, async (req, res) => {
   try {
     const cart = req.body.cartId;

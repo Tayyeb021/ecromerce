@@ -129,17 +129,16 @@ export const handleCart = () => {
   };
 };
 
+const REDIRECT_AFTER_LOGIN_KEY = 'redirectAfterLogin';
+
 export const handleCheckout = () => {
   return (dispatch, getState) => {
-    const successfulOptions = {
-      title: `Please Login to proceed to checkout`,
-      position: 'tr',
-      autoDismiss: 1
-    };
-
+    // Remember to return to checkout page after login/register
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(REDIRECT_AFTER_LOGIN_KEY, 'checkout');
+    }
     dispatch(toggleCart());
-    dispatch(push('/login'));
-    dispatch(success(successfulOptions));
+    dispatch(push('/checkout'));
   };
 };
 

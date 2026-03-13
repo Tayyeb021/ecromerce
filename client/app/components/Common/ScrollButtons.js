@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { WhatsAppIcon } from './Icon';
 
 class ScrollButtons extends React.PureComponent {
   scrollToTop = () => {
@@ -42,7 +43,7 @@ class ScrollButtons extends React.PureComponent {
           aria-label='Contact us on WhatsApp'
           title='WhatsApp: +92 313 0417345'
         >
-          <i className='fa fa-whatsapp' />
+          <WhatsAppIcon width='26' height='26' />
           <span className='whatsapp-number'>+92 313 0417345</span>
         </button>
         <button

@@ -42,12 +42,14 @@ const CartItemSchema = new Schema({
 
 module.exports = Mongoose.model('CartItem', CartItemSchema);
 
-// Cart Schema
+// Cart Schema (user optional for guest checkout)
 const CartSchema = new Schema({
   products: [CartItemSchema],
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: false,
+    default: null
   },
   updated: Date,
   created: {

@@ -26,7 +26,8 @@ class Cart extends React.PureComponent {
       handleCheckout,
       handleRemoveFromCart,
       placeOrder,
-      authenticated
+      authenticated,
+      isPlacingOrder
     } = this.props;
 
     return (
@@ -85,7 +86,8 @@ const mapStateToProps = state => {
     cartTotal: state.cart.cartTotal,
     authenticated: state.authentication.authenticated,
     shippingOptions: state.cart.shippingOptions,
-    selectedShippingOption: state.cart.selectedShippingOption
+    selectedShippingOption: state.cart.selectedShippingOption,
+    isPlacingOrder: state.order.isPlacingOrder
   };
 };
 

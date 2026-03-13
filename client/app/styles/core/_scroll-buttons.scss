@@ -87,7 +87,8 @@
         opacity: 1;
       }
 
-      .fa {
+      .fa,
+      .whatsapp-icon {
         transform: scale(1.25);
       }
 
@@ -101,10 +102,12 @@
       transform: translateY(-2px) scale(1.05);
     }
 
-    .fa {
+    .fa,
+    .whatsapp-icon {
       position: relative;
       z-index: 2;
       transition: transform 0.3s ease;
+      flex-shrink: 0;
     }
 
     &.scroll-btn-up {
@@ -120,15 +123,18 @@
       box-shadow: 
         0 6px 20px rgba(37, 211, 102, 0.4),
         0 0 0 0 rgba(37, 211, 102, 0.7);
-      width: auto;
-      min-width: 56px;
-      padding: 0 18px;
-      border-radius: 30px;
-      gap: 10px;
+      width: 50px;
+      min-width: 50px;
+      height: 50px;
+      padding: 0 12px;
+      border-radius: 50%;
+      gap: 8px;
       @include media-breakpoint-down(sm) {
+        width: 50px;
         min-width: 50px;
-        padding: 0 14px;
-        gap: 8px;
+        height: 50px;
+        padding: 0 10px;
+        gap: 6px;
       }
 
       &:hover {
@@ -136,7 +142,10 @@
         box-shadow: 
           0 8px 25px rgba(37, 211, 102, 0.6),
           0 0 0 8px rgba(37, 211, 102, 0.1);
-        min-width: 200px;
+        width: auto;
+        min-width: 50px;
+        height: 50px;
+        border-radius: 30px;
         @include media-breakpoint-down(sm) {
           min-width: 180px;
         }
@@ -165,6 +174,16 @@
         font-size: 24px;
         @include media-breakpoint-down(sm) {
           font-size: 22px;
+        }
+      }
+
+      .whatsapp-icon {
+        width: 26px;
+        height: 26px;
+        color: #ffffff;
+        @include media-breakpoint-down(sm) {
+          width: 22px;
+          height: 22px;
         }
       }
     }

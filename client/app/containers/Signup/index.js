@@ -42,7 +42,8 @@ class Signup extends React.PureComponent {
     return (
       <div className='signup-form'>
         {isLoading && <LoadingIndicator />}
-        <h2>Sign Up</h2>
+        <h2>Create an account</h2>
+        <p className='text-muted mb-0' style={{ fontSize: '14px' }}>Sign up to checkout and track orders.</p>
         <hr />
         <form onSubmit={handleSubmit} noValidate>
           <Row>
@@ -102,6 +103,7 @@ class Signup extends React.PureComponent {
                     signupChange(name, value);
                   }}
                 />
+                <small className='form-text text-muted'>Use 6+ characters.</small>
               </Col>
             </Col>
             <Col
@@ -127,7 +129,7 @@ class Signup extends React.PureComponent {
               disabled={isSubmitting}
             />
             <Link className='mt-3 mt-md-0 redirect-link' to={'/login'}>
-              Back to login
+              Already have an account? Sign in
             </Link>
           </div>
         </form>

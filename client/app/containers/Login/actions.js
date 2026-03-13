@@ -18,10 +18,10 @@ import {
 import { setAuth, clearAuth } from '../Authentication/actions';
 import setToken from '../../utils/token';
 import handleError from '../../utils/error';
-import { clearCart } from '../Cart/actions';
 import { clearAccount } from '../Account/actions';
 import { allFieldsValidation } from '../../utils/validation';
 import { API_URL } from '../../constants';
+const REDIRECT_AFTER_LOGIN_KEY = 'redirectAfterLogin';
 
 export const loginChange = (name, value) => {
   let formData = {};
@@ -75,6 +75,11 @@ export const login = () => {
       // Store token
       localStorage.setItem('token', response.data.token);
 
+      // Remember email for next time
+      if (typeof localStorage !== 'undefined' && user.email) {
+        localStorage.setItem('remembered_email', user.email);
+      }
+
       // Set token in axios headers
       setToken(response.data.token);
 
@@ -85,8 +90,14 @@ export const login = () => {
       // Reset login form
       dispatch({ type: LOGIN_RESET });
 
-      // Explicitly redirect to dashboard
-      dispatch(push('/dashboard'));
+      // If user came from checkout, return to checkout page
+      const redirectAfter = typeof sessionStorage !== 'undefined' && sessionStorage.getItem(REDIRECT_AFTER_LOGIN_KEY);
+      if (redirectAfter === 'checkout') {
+        sessionStorage.removeItem(REDIRECT_AFTER_LOGIN_KEY);
+        dispatch(push('/checkout'));
+      } else {
+        dispatch(push('/dashboard'));
+      }
     } catch (error) {
       console.error('Login error:', error);
       const title = `Please try to login again!`;

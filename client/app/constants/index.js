@@ -1,5 +1,6 @@
-// API_URL - defaults to production URL if not set in .env
-export const API_URL = process.env.API_URL || 'https://a-z-on-buz.com/api';
+// API_URL - base API URL (no trailing slash). Trimmed so .env spaces don't break requests.
+const rawApiUrl = process.env.API_URL || 'https://a-z-on-buz.com/api';
+export const API_URL = typeof rawApiUrl === 'string' ? rawApiUrl.trim().replace(/\/+$/, '') : rawApiUrl;
 
 export const SOCKET_URL =
   window.location.host.indexOf('localhost') >= 0

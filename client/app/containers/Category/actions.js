@@ -121,7 +121,7 @@ export const addCategory = () => {
     try {
       const rules = {
         name: 'required',
-        description: 'required|max:200',
+        description: 'required',
         products: 'required'
       };
 
@@ -136,8 +136,6 @@ export const addCategory = () => {
       const { isValid, errors } = allFieldsValidation(newCategory, rules, {
         'required.name': 'Name is required.',
         'required.description': 'Description is required.',
-        'max.description':
-          'Description may not be greater than 200 characters.',
         'required.products': 'Products are required.'
       });
 
@@ -175,7 +173,7 @@ export const updateCategory = () => {
       const rules = {
         name: 'required',
         slug: 'required|alpha_dash',
-        description: 'required|max:200',
+        description: 'required',
         products: 'required'
       };
 
@@ -194,8 +192,6 @@ export const updateCategory = () => {
         'alpha_dash.slug':
           'Slug may have alpha-numeric characters, as well as dashes and underscores only.',
         'required.description': 'Description is required.',
-        'max.description':
-          'Description may not be greater than 200 characters.',
         'required.products': 'Products are required.'
       });
 

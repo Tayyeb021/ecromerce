@@ -15,13 +15,13 @@ import {
   UPDATE_ORDER_STATUS,
   SET_ORDERS_LOADING,
   SET_ADVANCED_FILTERS,
-  CLEAR_ORDERS
+  CLEAR_ORDERS,
+  SET_PLACING_ORDER
 } from './constants';
 
 import { clearCart, getCartId } from '../Cart/actions';
-import { toggleCart } from '../Navigation/actions';
 import handleError from '../../utils/error';
-import { API_URL } from '../../constants';
+import { API_URL, CART_ID } from '../../constants';
 
 export const updateOrderStatus = value => {
   return {
@@ -197,8 +197,9 @@ export const updateOrderItemStatus = (itemId, status) => {
 
 export const addOrder = () => {
   return async (dispatch, getState) => {
+    dispatch({ type: SET_PLACING_ORDER, payload: true });
     try {
-      const cartId = localStorage.getItem('cart_id');
+      const cartId = localStorage.getItem(CART_ID);
       const cartState = getState().cart;
       const cartTotal = cartState.cartTotal; // Product total only
       const selectedShippingOption = cartState.selectedShippingOption;
@@ -241,6 +242,8 @@ export const addOrder = () => {
       }
     } catch (error) {
       handleError(error, dispatch);
+    } finally {
+      dispatch({ type: SET_PLACING_ORDER, payload: false });
     }
   };
 };
@@ -256,8 +259,75 @@ export const placeOrder = () => {
         dispatch(addOrder());
       });
     }
+  };
+};
 
-    dispatch(toggleCart());
+// Guest checkout: place order with email and optional address/phone (no account)
+export const placeGuestOrder = (guestData) => {
+  return async (dispatch, getState) => {
+    const { email, firstName, lastName, address, phone } = guestData || {};
+    const cartState = getState().cart;
+    const cartItems = cartState.cartItems;
+    const cartTotal = cartState.cartTotal;
+    const selectedShippingOption = cartState.selectedShippingOption;
+
+    if (!email || !cartItems || cartItems.length === 0) return;
+
+    const products = cartItems.map((item) => ({
+      product: item._id,
+      quantity: item.quantity,
+      price: item.price,
+      taxable: item.taxable
+    }));
+
+    const DEFAULT_SHIPPING_COST = 200;
+    let shippingCost = DEFAULT_SHIPPING_COST;
+    if (selectedShippingOption) {
+      if (selectedShippingOption.freeShippingThreshold && cartTotal >= selectedShippingOption.freeShippingThreshold) {
+        shippingCost = 0;
+      } else {
+        shippingCost = selectedShippingOption.cost || DEFAULT_SHIPPING_COST;
+      }
+    }
+    const total = cartTotal + shippingCost;
+    const shippingOption = selectedShippingOption ? {
+      name: selectedShippingOption.name,
+      cost: shippingCost,
+      deliveryTime: selectedShippingOption.deliveryTime
+    } : {
+      name: 'Standard Shipping',
+      cost: shippingCost,
+      deliveryTime: '5-7 business days'
+    };
+
+    dispatch({ type: SET_PLACING_ORDER, payload: true });
+    try {
+      const guestOrderUrl = `${API_URL.replace(/\/+$/, '')}/order/guest`;
+      const response = await axios.post(guestOrderUrl, {
+        email: email.trim(),
+        firstName: firstName ? firstName.trim() : '',
+        lastName: lastName ? lastName.trim() : '',
+        address: address ? String(address).trim() : '',
+        phone: phone ? String(phone).trim() : '',
+        products,
+        total,
+        shippingOption
+      });
+      dispatch(push(`/order/success/${response.data.order._id}`));
+      dispatch(clearCart());
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        handleError(
+          { ...error, response: { ...error.response, data: { error: 'Guest checkout not available. Deploy the latest backend (POST /api/order/guest).' } } },
+          dispatch,
+          'Place order failed'
+        );
+      } else {
+        handleError(error, dispatch);
+      }
+    } finally {
+      dispatch({ type: SET_PLACING_ORDER, payload: false });
+    }
   };
 };
 

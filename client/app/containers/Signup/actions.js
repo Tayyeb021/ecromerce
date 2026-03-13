@@ -6,6 +6,7 @@
 
 import { success } from 'react-notification-system-redux';
 import axios from 'axios';
+import { push } from 'connected-react-router';
 
 import {
   SIGNUP_CHANGE,
@@ -21,6 +22,7 @@ import setToken from '../../utils/token';
 import handleError from '../../utils/error';
 import { allFieldsValidation } from '../../utils/validation';
 import { API_URL } from '../../constants';
+const REDIRECT_AFTER_LOGIN_KEY = 'redirectAfterLogin';
 
 export const signupChange = (name, value) => {
   let formData = {};
@@ -85,6 +87,13 @@ export const signUp = () => {
       dispatch(setAuth());
       dispatch(success(successfulOptions));
       dispatch({ type: SIGNUP_RESET });
+
+      // If they came from checkout, take them back to checkout page
+      const redirectAfter = typeof sessionStorage !== 'undefined' && sessionStorage.getItem(REDIRECT_AFTER_LOGIN_KEY);
+      if (redirectAfter === 'checkout') {
+        sessionStorage.removeItem(REDIRECT_AFTER_LOGIN_KEY);
+        dispatch(push('/checkout'));
+      }
     } catch (error) {
       const title = `Please try to signup again!`;
       handleError(error, dispatch, title);

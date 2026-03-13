@@ -31,7 +31,7 @@ import actions from '../../actions';
 import Button from '../../components/Common/Button';
 import { getImageUrl } from '../../utils/image';
 import CartIcon from '../../components/Common/CartIcon';
-import { BarsIcon } from '../../components/Common/Icon';
+import { BarsIcon, WhatsAppIcon } from '../../components/Common/Icon';
 import MiniBrand from '../../components/Store//MiniBrand';
 import Menu from '../NavigationMenu';
 import Cart from '../Cart';
@@ -165,7 +165,7 @@ class Navigation extends React.PureComponent {
                     <span>Call +92 313 0417345</span>
                   </a>
                   <a href='https://wa.me/923130417345' target='_blank' rel='noopener noreferrer' className='contact-link whatsapp-link'>
-                    <i className='fa fa-whatsapp' />
+                    <WhatsAppIcon width='20' height='20' />
                     <span>WhatsApp</span>
                   </a>
                 </div>

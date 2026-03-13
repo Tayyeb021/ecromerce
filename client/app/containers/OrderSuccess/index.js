@@ -17,18 +17,39 @@ import LoadingIndicator from '../../components/Common/LoadingIndicator';
 class OrderSuccess extends React.PureComponent {
   componentDidMount() {
     const id = this.props.match.params.id;
-    this.props.fetchOrder(id);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.match.params.id !== prevProps.match.params.id) {
-      const id = this.props.match.params.id;
+    if (this.props.authenticated && id) {
       this.props.fetchOrder(id);
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.authenticated && this.props.match.params.id !== prevProps.match.params.id) {
+      const id = this.props.match.params.id;
+      if (id) this.props.fetchOrder(id);
+    }
+  }
+
   render() {
-    const { order, isLoading } = this.props;
+    const { order, isLoading, authenticated } = this.props;
+    const orderId = this.props.match.params.id;
+
+    // Guest checkout: show success using order id from URL (no fetch)
+    if (!authenticated && orderId) {
+      return (
+        <div className='order-success'>
+          <div className='order-message'>
+            <h2>Thank you for your order.</h2>
+            <p>Order <span className='order-label'>#{orderId}</span> is complete.</p>
+            <p>A confirmation email has been sent to you.</p>
+            <div className='order-success-actions'>
+              <Link to='/shop' className='btn-link shopping-btn'>
+                Continue Shopping
+              </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className='order-success'>
@@ -40,11 +61,7 @@ class OrderSuccess extends React.PureComponent {
             <p>
               Order{' '}
               <Link
-                to={{
-                  pathname: `/order/${order._id}?success`,
-                  state: { prevPath: location.pathname }
-                }}
-                // to={`/order/${order._id}?success`}
+                to={{ pathname: `/order/${order._id}?success`, state: { prevPath: window.location?.pathname } }}
                 className='order-label'
               >
                 #{order._id}
@@ -72,7 +89,8 @@ class OrderSuccess extends React.PureComponent {
 const mapStateToProps = state => {
   return {
     order: state.order.order,
-    isLoading: state.order.isLoading
+    isLoading: state.order.isLoading,
+    authenticated: state.authentication.authenticated
   };
 };
 

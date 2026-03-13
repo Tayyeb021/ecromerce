@@ -17,7 +17,16 @@ import Button from '../../components/Common/Button';
 import LoadingIndicator from '../../components/Common/LoadingIndicator';
 import SignupProvider from '../../components/Common/SignupProvider';
 
+const REMEMBERED_EMAIL_KEY = 'remembered_email';
+
 class Login extends React.PureComponent {
+  componentDidMount() {
+    const savedEmail = typeof window !== 'undefined' && localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (savedEmail && this.props.loginChange) {
+      this.props.loginChange('email', savedEmail);
+    }
+  }
+
   render() {
     const {
       authenticated,
@@ -30,6 +39,8 @@ class Login extends React.PureComponent {
     } = this.props;
 
     if (authenticated) return <Redirect to='/dashboard' />;
+
+    const fromCheckout = typeof window !== 'undefined' && sessionStorage.getItem('redirectAfterLogin') === 'checkout';
 
     const registerLink = () => {
       this.props.history.push('/register');
@@ -51,8 +62,10 @@ class Login extends React.PureComponent {
             </div>
           </Link>
         </div>
-        <h2 className='login-title'>Welcome Back</h2>
-        <p className='login-subtitle'>Sign in to your account to continue</p>
+        <h2 className='login-title'>{fromCheckout ? 'Sign in to complete your order' : 'Welcome Back'}</h2>
+        <p className='login-subtitle'>
+          {fromCheckout ? 'Your cart is saved. Sign in and we’ll take you right back to checkout.' : 'Sign in to your account to continue'}
+        </p>
         <form onSubmit={handleSubmit} noValidate>
           <div className='login-social-section'>
             <SignupProvider />
@@ -64,9 +77,9 @@ class Login extends React.PureComponent {
             <Input
               type={'text'}
               error={formErrors['email']}
-              label={'Email Address'}
+              label={'Email'}
               name={'email'}
-              placeholder={'Please Enter Your Email'}
+              placeholder={'Email'}
               value={loginFormData.email}
               onInputChange={(name, value) => {
                 loginChange(name, value);
@@ -77,7 +90,7 @@ class Login extends React.PureComponent {
               error={formErrors['password']}
               label={'Password'}
               name={'password'}
-              placeholder={'Please Enter Your Password'}
+              placeholder={'Password'}
               value={loginFormData.password}
               onInputChange={(name, value) => {
                 loginChange(name, value);
@@ -86,11 +99,11 @@ class Login extends React.PureComponent {
           </div>
           <hr />
           <div className='d-flex flex-column flex-md-row align-items-md-center justify-content-between'>
-            <div className='d-flex justify-content-between align-items-center mb-3 mb-md-0'>
+            <div className='d-flex flex-wrap justify-content-between align-items-center mb-3 mb-md-0 gap-2'>
               <Button
                 type='submit'
                 variant='primary'
-                text='Login'
+                text='Sign in'
                 disabled={isSubmitting}
               />
               <Button
@@ -100,12 +113,19 @@ class Login extends React.PureComponent {
                 onClick={registerLink}
               />
             </div>
-            <Link
-              className='redirect-link forgot-password-link'
-              to={'/forgot-password'}
-            >
-              Forgot Password?
-            </Link>
+            <div className='d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2'>
+              {fromCheckout && (
+                <Link className='redirect-link' to='/shop'>
+                  Back to shop
+                </Link>
+              )}
+              <Link
+                className='redirect-link forgot-password-link'
+                to={'/forgot-password'}
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
         </form>
         </div>

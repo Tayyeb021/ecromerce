@@ -12,6 +12,7 @@ import {
   WhatsappShareButton,
   FacebookShareButton
 } from 'react-share';
+import { WhatsAppIcon } from '../../Common/Icon';
 
 const SocialShare = props => {
   const { product } = props;
@@ -41,7 +42,7 @@ const SocialShare = props => {
       </li>
       <li>
         <WhatsappShareButton url={`${shareMsg}`} className='share-btn whatsapp'>
-          <i className='fa fa-whatsapp'></i>
+          <WhatsAppIcon width='20' height='20' />
         </WhatsappShareButton>
       </li>
     </ul>
