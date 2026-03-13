@@ -17,7 +17,10 @@ const createTransporter = () => {
       auth: {
         user: email,
         pass: password
-      }
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
   } catch (error) {
     console.error('Error creating Gmail transporter:', error);
@@ -48,8 +51,11 @@ exports.sendEmail = async (toEmail, type, host, data) => {
     console.log('Email sent successfully:', info.messageId);
     return info;
   } catch (error) {
-    console.error('Error sending email:', error);
-    return { error: error.message };
+    const msg = error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED'
+      ? 'Email service connection failed (check GMAIL_EMAIL, GMAIL_PASSWORD and network).'
+      : error.message;
+    console.warn('Email send failed:', msg);
+    return { error: msg };
   }
 };
 

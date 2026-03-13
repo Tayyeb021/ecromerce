@@ -49,15 +49,23 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Serve static files from uploads directory
-// Try root uploads directory first (one level up from server/), fallback to server/uploads
+// Serve static files from uploads directory (must match server/utils/storage.js save path)
 const path = require('path');
 const fs = require('fs');
 const rootUploadsPath = path.join(__dirname, '../uploads');
 const serverUploadsPath = path.join(__dirname, './uploads');
 
-// Use root uploads if it exists, otherwise use server/uploads (for cPanel compatibility)
-const uploadsPath = fs.existsSync(rootUploadsPath) ? rootUploadsPath : serverUploadsPath;
+// Ensure root uploads and products subfolder exist (same as storage.js)
+if (!fs.existsSync(rootUploadsPath)) {
+  fs.mkdirSync(rootUploadsPath, { recursive: true });
+}
+const productsUploadsPath = path.join(rootUploadsPath, 'products');
+if (!fs.existsSync(productsUploadsPath)) {
+  fs.mkdirSync(productsUploadsPath, { recursive: true });
+}
+
+// Serve from project root uploads so /uploads/products/* matches saved files
+const uploadsPath = rootUploadsPath;
 app.use('/uploads', express.static(uploadsPath));
 
 // Initialize passport
