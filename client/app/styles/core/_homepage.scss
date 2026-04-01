@@ -6,8 +6,8 @@
 
   // Hero Section
   .homepage-hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 50px 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0b1220 100%);
+    padding: 44px 0;
     margin-bottom: 0;
 
     .hero-row {
@@ -18,9 +18,9 @@
       padding: 0 10px;
 
       .hero-carousel-wrapper {
-        border-radius: 16px;
+        border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.35);
         background: $white;
 
         .hero-slide {
@@ -46,16 +46,16 @@
 
         .hero-side-card {
           position: relative;
-          border-radius: 12px;
+          border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 14px 34px rgba(15, 23, 42, 0.25);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
           background: $white;
           cursor: pointer;
 
           &:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.32);
           }
 
           img {
@@ -63,11 +63,11 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.4s ease;
+            transition: transform 0.35s ease;
           }
 
           &:hover img {
-            transform: scale(1.1);
+            transform: scale(1.04);
           }
 
           .hero-card-overlay {
@@ -82,13 +82,14 @@
             padding: 20px;
 
             .hero-card-badge {
-              background: $white;
-              color: $primary-color;
-              padding: 8px 16px;
-              border-radius: 20px;
-              font-weight: 600;
-              font-size: 14px;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+              background: rgba(255, 255, 255, 0.92);
+              color: #0f172a;
+              padding: 8px 14px;
+              border-radius: 999px;
+              font-weight: 700;
+              font-size: 13px;
+              letter-spacing: 0.02em;
+              box-shadow: 0 8px 22px rgba(15, 23, 42, 0.24);
             }
           }
 
@@ -108,10 +109,10 @@
 
   // Features Bar
   .features-bar {
-    background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
-    border-bottom: 1px solid rgba(41, 98, 255, 0.1);
-    padding: 50px 0;
-    margin-bottom: 60px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 42px 0;
+    margin-bottom: 46px;
     position: relative;
     overflow: hidden;
 
@@ -121,19 +122,8 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #2962ff, #1e88e5, #2962ff, transparent);
-      background-size: 200% 100%;
-      animation: gradientFlow 3s ease infinite;
-    }
-
-    @keyframes gradientFlow {
-      0%, 100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(41, 98, 255, 0.6), rgba(16, 185, 129, 0.6), transparent);
     }
 
     .features-row {
@@ -145,10 +135,10 @@
       align-items: center;
       gap: 18px;
       padding: 24px 20px;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       border-radius: 16px;
       background: $white;
-      border: 2px solid rgba(41, 98, 255, 0.1);
+      border: 1px solid rgba(15, 23, 42, 0.08);
       position: relative;
       overflow: hidden;
 
@@ -164,11 +154,9 @@
       }
 
       &:hover {
-        background: linear-gradient(135deg, rgba(41, 98, 255, 0.05) 0%, rgba(30, 136, 229, 0.08) 100%);
-        border-color: rgba(41, 98, 255, 0.3);
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(41, 98, 255, 0.15), 
-                    0 4px 12px rgba(30, 136, 229, 0.1);
+        border-color: rgba(41, 98, 255, 0.22);
+        transform: translateY(-3px);
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
 
         &::before {
           left: 100%;
@@ -203,14 +191,14 @@
         width: 60px;
         height: 60px;
         min-width: 60px;
-        background: linear-gradient(135deg, #2962ff 0%, #1e88e5 50%, #1565c0 100%);
+        background: linear-gradient(135deg, #2962ff 0%, #10b981 100%);
         border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 16px rgba(41, 98, 255, 0.3);
         position: relative;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
 
         &::after {
@@ -258,9 +246,9 @@
 
   // Categories Section
   .homepage-categories-section {
-    padding: 60px 0;
+    padding: 56px 0;
     background: $white;
-    margin: 40px 0;
+    margin: 26px 0 48px;
 
     .section-header {
       text-align: center;
@@ -268,15 +256,13 @@
 
       .section-header-content {
         .section-title {
-          font-size: 36px;
+          font-size: 34px;
           font-weight: 700;
           color: $theme-black;
           margin: 0 0 12px 0;
           letter-spacing: -0.5px;
-          background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          background: none;
+          -webkit-text-fill-color: initial;
 
           @include media-breakpoint-down(md) {
             font-size: 28px;
@@ -309,14 +295,14 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 30px 20px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 1) 100%);
+        padding: 26px 18px;
+        background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        border: 2px solid rgba(0, 0, 0, 0.04);
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        border: 1px solid rgba(15, 23, 42, 0.06);
         text-decoration: none;
         color: inherit;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         height: 100%;
         min-height: 220px;
         position: relative;
@@ -335,22 +321,22 @@
         }
 
         &:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 12px 32px rgba(41, 98, 255, 0.2);
-          border-color: rgba(41, 98, 255, 0.3);
+          transform: translateY(-4px);
+          box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
+          border-color: rgba(41, 98, 255, 0.18);
 
           &::before {
             opacity: 1;
           }
 
           .category-icon-wrapper {
-            transform: scale(1.15) rotate(5deg);
+            transform: scale(1.06);
           }
 
           .category-icon {
-            background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+            background: linear-gradient(135deg, #2962ff 0%, #10b981 100%);
             color: $white;
-            box-shadow: 0 8px 24px rgba(41, 98, 255, 0.4);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
           }
 
           .category-link {

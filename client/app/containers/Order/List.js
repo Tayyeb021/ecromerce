@@ -28,7 +28,12 @@ class List extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetchAccountOrders();
+    const { user, fetchOrders, fetchAccountOrders } = this.props;
+    if (user.role === ROLES.Admin) {
+      fetchOrders();
+    } else {
+      fetchAccountOrders();
+    }
   }
 
   handleOrderSearch = e => {
@@ -44,7 +49,12 @@ class List extends React.PureComponent {
   };
 
   handleOnPagination = (n, v) => {
-    this.props.fetchAccountOrders(v);
+    const { user, fetchOrders, fetchAccountOrders } = this.props;
+    if (user.role === ROLES.Admin) {
+      fetchOrders(v);
+    } else {
+      fetchAccountOrders(v);
+    }
   };
 
   render() {

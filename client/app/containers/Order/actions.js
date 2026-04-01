@@ -195,7 +195,7 @@ export const updateOrderItemStatus = (itemId, status) => {
   };
 };
 
-export const addOrder = () => {
+export const addOrder = (customerInfo = {}) => {
   return async (dispatch, getState) => {
     dispatch({ type: SET_PLACING_ORDER, payload: true });
     try {
@@ -231,7 +231,8 @@ export const addOrder = () => {
           name: 'Standard Shipping',
           cost: shippingCost,
           deliveryTime: '5-7 business days'
-        }
+        },
+        ...customerInfo
       };
 
       if (cartId) {
@@ -248,7 +249,7 @@ export const addOrder = () => {
   };
 };
 
-export const placeOrder = () => {
+export const placeOrder = (customerInfo) => {
   return (dispatch, getState) => {
     const token = localStorage.getItem('token');
 
@@ -256,7 +257,7 @@ export const placeOrder = () => {
 
     if (token && cartItems.length > 0) {
       Promise.all([dispatch(getCartId())]).then(() => {
-        dispatch(addOrder());
+        dispatch(addOrder(customerInfo));
       });
     }
   };

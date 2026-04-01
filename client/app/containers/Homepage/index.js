@@ -62,19 +62,16 @@ class Homepage extends React.PureComponent {
     const currentPage = advancedFilters?.currentPage || 1;
     const totalProducts = advancedFilters?.count || 0;
     const displayPagination = totalPages > 1;
-    // Sort categories to put "Home" first, then get first 8 categories for homepage display
-    const sortedCategories = categories && categories.length > 0 ? [...categories].sort((a, b) => {
-      const aName = a.name.toLowerCase();
-      const bName = b.name.toLowerCase();
-
-      // If one is "home", it should come first
-      if (aName === 'home' || aName.includes('home')) return -1;
-      if (bName === 'home' || bName.includes('home')) return 1;
-
-      // Otherwise maintain original order
-      return 0;
-    }) : [];
-    const displayCategories = sortedCategories.slice(0, 8);
+    // Homepage categories: hide "Home" category so it doesn't show as a tile.
+    const displayCategories =
+      categories && categories.length > 0
+        ? categories
+            .filter(c => {
+              const name = (c?.name || '').toLowerCase().trim();
+              return name !== 'home' && !name.includes('home');
+            })
+            .slice(0, 8)
+        : [];
 
     return (
       <div className='homepage'>

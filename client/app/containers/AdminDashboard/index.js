@@ -10,7 +10,7 @@ import { Row, Col, Card, CardBody } from 'reactstrap';
 
 import actions from '../../actions';
 import SubPage from '../../components/Manager/SubPage';
-import OrderList from '../../components/Manager/OrderList';
+import AdminOrderTable from '../../components/Manager/AdminOrderTable';
 import LoadingIndicator from '../../components/Common/LoadingIndicator';
 import NotFound from '../../components/Common/NotFound';
 import { formatDate } from '../../utils/date';
@@ -22,7 +22,7 @@ class AdminDashboard extends React.PureComponent {
 
   formatChartData = () => {
     const { salesData } = this.props;
-    
+
     if (!salesData || salesData.length === 0) {
       return [];
     }
@@ -34,153 +34,159 @@ class AdminDashboard extends React.PureComponent {
     }));
   };
 
-  renderSimpleChart = () => {
-    const chartData = this.formatChartData();
-    if (!chartData || chartData.length === 0) return null;
+  getPeakSalesDay = chartData => {
+    if (!chartData.length) return null;
+    return chartData.reduce((peak, current) =>
+      current.sales > peak.sales ? current : peak
+    );
+  };
 
-    const width = 800;
-    const height = 300;
-    const padding = { top: 20, right: 30, bottom: 40, left: 60 };
+  getLatestOrder = orders => {
+    if (!orders.length) return null;
+    return [...orders].sort((a, b) => new Date(b.created) - new Date(a.created))[0];
+  };
+
+  renderTrendChart = chartData => {
+    if (!chartData.length) return null;
+
+    const width = 760;
+    const height = 320;
+    const padding = { top: 20, right: 16, bottom: 40, left: 48 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
+    const maxSales = Math.max(...chartData.map(item => item.sales), 1);
+    const maxOrders = Math.max(...chartData.map(item => item.orders), 1);
+    const xStep = chartData.length > 1 ? chartWidth / (chartData.length - 1) : 0;
 
-    const maxSales = Math.max(...chartData.map(d => d.sales), 1);
-    const maxOrders = Math.max(...chartData.map(d => d.orders), 1);
-
-    const xScale = chartWidth / (chartData.length - 1 || 1);
-    const yScaleSales = chartHeight / maxSales;
-    const yScaleOrders = chartHeight / maxOrders;
-
-    const salesPoints = chartData.map((d, i) => ({
-      x: padding.left + i * xScale,
-      y: padding.top + chartHeight - d.sales * yScaleSales
+    const salesPoints = chartData.map((item, index) => ({
+      x: padding.left + xStep * index,
+      y: padding.top + chartHeight - (item.sales / maxSales) * chartHeight
     }));
 
-    const ordersPoints = chartData.map((d, i) => ({
-      x: padding.left + i * xScale,
-      y: padding.top + chartHeight - d.orders * yScaleOrders
+    const orderPoints = chartData.map((item, index) => ({
+      x: padding.left + xStep * index,
+      y: padding.top + chartHeight - (item.orders / maxOrders) * chartHeight
     }));
 
-    const salesPath = salesPoints.map((p, i) => 
-      i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`
-    ).join(' ');
-
-    const ordersPath = ordersPoints.map((p, i) => 
-      i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`
-    ).join(' ');
+    const salesLine = salesPoints
+      .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+      .join(' ');
+    const salesArea = `${salesLine} L ${padding.left + chartWidth} ${padding.top + chartHeight} L ${padding.left} ${padding.top + chartHeight} Z`;
+    const orderLine = orderPoints
+      .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+      .join(' ');
 
     return (
-      <div style={{ overflowX: 'auto' }}>
-        <svg width={width} height={height} style={{ display: 'block' }}>
-          {/* Grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => (
-            <g key={i}>
-              <line
-                x1={padding.left}
-                y1={padding.top + chartHeight * ratio}
-                x2={width - padding.right}
-                y2={padding.top + chartHeight * ratio}
-                stroke="#e0e0e0"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-              />
+      <>
+        <div className='admin-dashboard__chart-wrap'>
+          <svg
+            viewBox={`0 0 ${width} ${height}`}
+            className='admin-dashboard__chart-svg'
+            role='img'
+            aria-label='Sales trend chart'
+          >
+            <defs>
+              <linearGradient id='adminDashboardSalesFill' x1='0' y1='0' x2='0' y2='1'>
+                <stop offset='0%' stopColor='#2962ff' stopOpacity='0.22' />
+                <stop offset='100%' stopColor='#2962ff' stopOpacity='0.02' />
+              </linearGradient>
+            </defs>
+
+            {[0, 0.25, 0.5, 0.75, 1].map(ratio => {
+              const y = padding.top + chartHeight * ratio;
+              return (
+                <line
+                  key={ratio}
+                  x1={padding.left}
+                  y1={y}
+                  x2={padding.left + chartWidth}
+                  y2={y}
+                  stroke='#e5e7eb'
+                  strokeDasharray='4 4'
+                />
+              );
+            })}
+
+            {chartData.map((item, index) => (
               <text
-                x={padding.left - 10}
-                y={padding.top + chartHeight * ratio}
-                textAnchor="end"
-                fontSize="10"
-                fill="#666"
+                key={item.date}
+                x={padding.left + xStep * index}
+                y={height - 14}
+                textAnchor='middle'
+                className='admin-dashboard__chart-axis'
               >
-                {Math.round(maxSales * (1 - ratio))}
+                {item.date}
               </text>
-            </g>
-          ))}
+            ))}
 
-          {/* X-axis labels */}
-          {chartData.map((d, i) => (
-            <text
-              key={i}
-              x={padding.left + i * xScale}
-              y={height - padding.bottom + 20}
-              textAnchor="middle"
-              fontSize="10"
-              fill="#666"
-            >
-              {d.date}
-            </text>
-          ))}
+            {[0, 0.5, 1].map(ratio => {
+              const y = padding.top + chartHeight * ratio;
+              const value = Math.round(maxSales * (1 - ratio));
 
-          {/* Sales line */}
-          <path
-            d={salesPath}
-            fill="none"
-            stroke="#8884d8"
-            strokeWidth="2"
-          />
-          {salesPoints.map((p, i) => (
-            <circle
-              key={`sales-${i}`}
-              cx={p.x}
-              cy={p.y}
-              r="4"
-              fill="#8884d8"
-            />
-          ))}
+              return (
+                <text
+                  key={ratio}
+                  x={padding.left - 12}
+                  y={y + 4}
+                  textAnchor='end'
+                  className='admin-dashboard__chart-axis'
+                >
+                  {value}
+                </text>
+              );
+            })}
 
-          {/* Orders line */}
-          <path
-            d={ordersPath}
-            fill="none"
-            stroke="#82ca9d"
-            strokeWidth="2"
-          />
-          {ordersPoints.map((p, i) => (
-            <circle
-              key={`orders-${i}`}
-              cx={p.x}
-              cy={p.y}
-              r="4"
-              fill="#82ca9d"
+            <path d={salesArea} fill='url(#adminDashboardSalesFill)' />
+            <path
+              d={salesLine}
+              fill='none'
+              stroke='#2962ff'
+              strokeWidth='3'
+              strokeLinecap='round'
+              strokeLinejoin='round'
             />
-          ))}
+            <path
+              d={orderLine}
+              fill='none'
+              stroke='#10b981'
+              strokeWidth='2.5'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
 
-          {/* Legend */}
-          <g>
-            <line
-              x1={width - padding.right - 100}
-              y1={padding.top + 10}
-              x2={width - padding.right - 80}
-              y2={padding.top + 10}
-              stroke="#8884d8"
-              strokeWidth="2"
-            />
-            <text
-              x={width - padding.right - 75}
-              y={padding.top + 14}
-              fontSize="12"
-              fill="#333"
-            >
-              Sales (PKR)
-            </text>
-            <line
-              x1={width - padding.right - 100}
-              y1={padding.top + 30}
-              x2={width - padding.right - 80}
-              y2={padding.top + 30}
-              stroke="#82ca9d"
-              strokeWidth="2"
-            />
-            <text
-              x={width - padding.right - 75}
-              y={padding.top + 34}
-              fontSize="12"
-              fill="#333"
-            >
-              Orders
-            </text>
-          </g>
-        </svg>
-      </div>
+            {salesPoints.map(point => (
+              <circle
+                key={`sales-${point.x}`}
+                cx={point.x}
+                cy={point.y}
+                r='4'
+                fill='#2962ff'
+              />
+            ))}
+
+            {orderPoints.map(point => (
+              <circle
+                key={`orders-${point.x}`}
+                cx={point.x}
+                cy={point.y}
+                r='3.5'
+                fill='#10b981'
+              />
+            ))}
+          </svg>
+        </div>
+
+        <div className='admin-dashboard__chart-legend'>
+          <span>
+            <i className='admin-dashboard__chart-dot admin-dashboard__chart-dot--sales' />
+            Sales
+          </span>
+          <span>
+            <i className='admin-dashboard__chart-dot admin-dashboard__chart-dot--orders' />
+            Orders
+          </span>
+        </div>
+      </>
     );
   };
 
@@ -189,63 +195,152 @@ class AdminDashboard extends React.PureComponent {
     const chartData = this.formatChartData();
     const hasData = salesData && salesData.length > 0;
     const displayOrders = orders && orders.length > 0;
+    const peakDay = this.getPeakSalesDay(chartData);
+    const latestOrder = this.getLatestOrder(orders || []);
+    const averageOrderValue =
+      salesCount > 0 ? (totalSales / salesCount).toFixed(2) : '0.00';
+    const activeDays = chartData.filter(item => item.orders > 0).length;
+    const summaryCards = [
+      {
+        label: 'Total Sales',
+        value: `PKR ${totalSales.toFixed(2)}`,
+        note: 'Current month revenue'
+      },
+      {
+        label: 'Total Orders',
+        value: salesCount,
+        note: 'Orders placed this month'
+      },
+      {
+        label: 'Average Order Value',
+        value: `PKR ${averageOrderValue}`,
+        note: 'Average spend per order'
+      },
+      {
+        label: 'Active Sales Days',
+        value: activeDays,
+        note: 'Days with at least one order'
+      }
+    ];
 
     return (
       <div className='admin-dashboard'>
         <SubPage title='Admin Dashboard'>
           {isLoading && <LoadingIndicator />}
-          
+
           {!isLoading && (
             <>
-              {/* Sales Summary Cards */}
-              <Row className='mb-4'>
-                <Col md='6' lg='4' className='mb-3'>
-                  <Card className='h-100'>
+              <Row className='admin-dashboard__summary'>
+                {summaryCards.map(card => (
+                  <Col md='6' xl='3' className='mb-3' key={card.label}>
+                    <Card className='admin-dashboard__metric-card h-100'>
+                      <CardBody>
+                        <span className='admin-dashboard__metric-label'>
+                          {card.label}
+                        </span>
+                        <h2 className='admin-dashboard__metric-value'>
+                          {card.value}
+                        </h2>
+                        <small className='admin-dashboard__metric-note'>
+                          {card.note}
+                        </small>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+
+              <Row className='admin-dashboard__content'>
+                <Col lg='8' className='mb-4'>
+                  <Card className='admin-dashboard__chart-card h-100'>
                     <CardBody>
-                      <h5 className='text-muted mb-2'>Total Sales</h5>
-                      <h2 className='mb-0'>PKR {totalSales.toFixed(2)}</h2>
-                      <small className='text-muted'>Current Month</small>
+                      <div className='admin-dashboard__section-head'>
+                        <div>
+                          <h4 className='mb-1'>Sales Trend</h4>
+                          <p className='mb-0 text-muted'>
+                            Daily revenue and order volume for the current month.
+                          </p>
+                        </div>
+                      </div>
+
+                      {hasData ? (
+                        this.renderTrendChart(chartData)
+                      ) : (
+                        <NotFound message='No sales data available for the current month.' />
+                      )}
                     </CardBody>
                   </Card>
                 </Col>
-                <Col md='6' lg='4' className='mb-3'>
-                  <Card className='h-100'>
+
+                <Col lg='4' className='mb-4'>
+                  <Card className='admin-dashboard__insights-card h-100'>
                     <CardBody>
-                      <h5 className='text-muted mb-2'>Total Orders</h5>
-                      <h2 className='mb-0'>{salesCount}</h2>
-                      <small className='text-muted'>Current Month</small>
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col md='6' lg='4' className='mb-3'>
-                  <Card className='h-100'>
-                    <CardBody>
-                      <h5 className='text-muted mb-2'>Average Order Value</h5>
-                      <h2 className='mb-0'>
-                        PKR {salesCount > 0 ? (totalSales / salesCount).toFixed(2) : '0.00'}
-                      </h2>
-                      <small className='text-muted'>Current Month</small>
+                      <div className='admin-dashboard__section-head'>
+                        <div>
+                          <h4 className='mb-1'>At a Glance</h4>
+                          <p className='mb-0 text-muted'>
+                            Quick highlights to monitor this month.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className='admin-dashboard__insights-list'>
+                        <div className='admin-dashboard__insight'>
+                          <span className='admin-dashboard__insight-label'>
+                            Peak sales day
+                          </span>
+                          <strong>
+                            {peakDay
+                              ? `${peakDay.date} · PKR ${peakDay.sales.toFixed(2)}`
+                              : 'No data yet'}
+                          </strong>
+                        </div>
+                        <div className='admin-dashboard__insight'>
+                          <span className='admin-dashboard__insight-label'>
+                            Best order day volume
+                          </span>
+                          <strong>
+                            {peakDay
+                              ? `${peakDay.orders} orders`
+                              : 'No orders yet'}
+                          </strong>
+                        </div>
+                        <div className='admin-dashboard__insight'>
+                          <span className='admin-dashboard__insight-label'>
+                            Latest order
+                          </span>
+                          <strong>
+                            {latestOrder
+                              ? `#${latestOrder._id.slice(-6)} · ${formatDate(
+                                  latestOrder.created
+                                )}`
+                              : 'No recent orders'}
+                          </strong>
+                        </div>
+                        <div className='admin-dashboard__insight'>
+                          <span className='admin-dashboard__insight-label'>
+                            Orders shown below
+                          </span>
+                          <strong>{displayOrders ? Math.min(orders.length, 8) : 0}</strong>
+                        </div>
+                      </div>
                     </CardBody>
                   </Card>
                 </Col>
               </Row>
 
-              {/* Sales Graph */}
-              {hasData && (
-                <Card className='mb-4'>
-                  <CardBody>
-                    <h4 className='mb-3'>Daily Sales Trend - Current Month</h4>
-                    {this.renderSimpleChart()}
-                  </CardBody>
-                </Card>
-              )}
-
-              {/* Sales List */}
-              <Card>
+              <Card className='admin-dashboard__orders-card'>
                 <CardBody>
-                  <h4 className='mb-3'>Recent Orders - Current Month</h4>
+                  <div className='admin-dashboard__section-head'>
+                    <div>
+                      <h4 className='mb-1'>Recent Orders</h4>
+                      <p className='mb-0 text-muted'>
+                        Compact admin view with customer and order status details.
+                      </p>
+                    </div>
+                  </div>
                   {displayOrders ? (
-                    <OrderList orders={orders.slice(0, 10)} />
+                    <AdminOrderTable orders={orders.slice(0, 8)} />
                   ) : (
                     <NotFound message='No orders found for the current month.' />
                   )}

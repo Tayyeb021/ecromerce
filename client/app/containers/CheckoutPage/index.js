@@ -47,8 +47,7 @@ const CheckoutPage = (props) => {
     }
   }, [cartItems.length, history, shippingOptions.length, fetchShippingOptions]);
 
-  const handleGuestSubmit = (e) => {
-    e.preventDefault();
+  const validateCheckoutForm = () => {
     const email = (guestEmail || '').trim();
     const address = (guestAddress || '').trim();
     const phone = (guestPhone || '').trim();
@@ -61,12 +60,35 @@ const CheckoutPage = (props) => {
     }
     if (!address) errors.address = ['Address is required.'];
     if (!phone) errors.phone = ['Phone number is required.'];
+    return { errors, email, address, phone };
+  };
+
+  const handleGuestSubmit = (e) => {
+    e.preventDefault();
+    const { errors, email, address, phone } = validateCheckoutForm();
     if (Object.keys(errors).length > 0) {
       setGuestErrors(errors);
       return;
     }
     setGuestErrors({});
     placeGuestOrder({
+      email,
+      firstName: guestFirstName.trim() || undefined,
+      lastName: guestLastName.trim() || undefined,
+      address,
+      phone
+    });
+  };
+
+  const handleLoggedInSubmit = (e) => {
+    e.preventDefault();
+    const { errors, email, address, phone } = validateCheckoutForm();
+    if (Object.keys(errors).length > 0) {
+      setGuestErrors(errors);
+      return;
+    }
+    setGuestErrors({});
+    placeOrder({
       email,
       firstName: guestFirstName.trim() || undefined,
       lastName: guestLastName.trim() || undefined,
@@ -107,15 +129,70 @@ const CheckoutPage = (props) => {
               />
 
               {authenticated ? (
-                <div className='checkout-actions-section mt-3'>
-                  <Button
-                    variant='primary'
-                    text={isPlacingOrder ? 'Placing order…' : 'Place Order'}
-                    onClick={() => placeOrder()}
-                    disabled={isPlacingOrder}
-                    className='w-100'
-                  />
-                  <p className='checkout-hint mt-2 mb-0'>Review your cart and shipping above.</p>
+                <div className='checkout-section mt-3'>
+                  <h3 className='section-subtitle'>Shipping & contact information</h3>
+                  <p className='text-muted small'>Email, address and phone are required for delivery.</p>
+                  <form onSubmit={handleLoggedInSubmit} noValidate>
+                    <Input
+                      type='text'
+                      label='Email'
+                      name='checkoutEmail'
+                      placeholder='your@email.com'
+                      value={guestEmail}
+                      error={guestErrors.email}
+                      onInputChange={(name, value) => {
+                        setGuestEmail(value);
+                        if (guestErrors.email) setGuestErrors({ ...guestErrors, email: null });
+                      }}
+                    />
+                    <Input
+                      type='text'
+                      label='First name (optional)'
+                      name='checkoutFirstName'
+                      placeholder='First name'
+                      value={guestFirstName}
+                      onInputChange={(name, value) => setGuestFirstName(value)}
+                    />
+                    <Input
+                      type='text'
+                      label='Last name (optional)'
+                      name='checkoutLastName'
+                      placeholder='Last name'
+                      value={guestLastName}
+                      onInputChange={(name, value) => setGuestLastName(value)}
+                    />
+                    <Input
+                      type='text'
+                      label='Address'
+                      name='checkoutAddress'
+                      placeholder='Delivery address'
+                      value={guestAddress}
+                      error={guestErrors.address}
+                      onInputChange={(name, value) => {
+                        setGuestAddress(value);
+                        if (guestErrors.address) setGuestErrors({ ...guestErrors, address: null });
+                      }}
+                    />
+                    <Input
+                      type='text'
+                      label='Phone number'
+                      name='checkoutPhone'
+                      placeholder='Phone number'
+                      value={guestPhone}
+                      error={guestErrors.phone}
+                      onInputChange={(name, value) => {
+                        setGuestPhone(value);
+                        if (guestErrors.phone) setGuestErrors({ ...guestErrors, phone: null });
+                      }}
+                    />
+                    <Button
+                      type='submit'
+                      variant='primary'
+                      text={isPlacingOrder ? 'Placing order…' : 'Place Order'}
+                      disabled={isPlacingOrder}
+                      className='w-100 mt-2'
+                    />
+                  </form>
                 </div>
               ) : (
                 <div className='checkout-guest-section mt-3'>

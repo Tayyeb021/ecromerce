@@ -29,7 +29,8 @@
 .panel-sidebar {
   background: $white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   overflow: hidden;
   margin-bottom: 20px;
 
@@ -40,19 +41,21 @@
   .panel-title,
   .menu-panel {
     margin: 0;
-    padding: 20px;
-    text-align: center;
-    background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
-    color: $white;
-    font-weight: 600;
-    font-size: 18px;
+    padding: 18px 20px;
+    text-align: left;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     border: none;
   }
 
   .menu-panel {
     display: none;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     border-radius: 12px 12px 0 0;
 
     @include media-breakpoint-down(sm) {
@@ -63,20 +66,20 @@
       border-bottom: none;
 
       &:hover {
-        background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
       }
     }
   }
 
   .panel-title {
-    background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
-    padding: 24px 20px;
-    font-size: 20px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 18px 20px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 8px rgba(41, 98, 255, 0.2);
+    letter-spacing: 0.04em;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
 
     @include media-breakpoint-down(sm) {
       display: none;
@@ -91,13 +94,13 @@
   .panel-links {
     width: 100%;
     margin: 0;
-    padding: 8px 0;
+    padding: 10px 0;
     list-style: none;
 
     li {
       border: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      transition: background-color 0.2s ease;
       margin: 0;
 
       &:last-child {
@@ -105,8 +108,7 @@
       }
 
       &:hover {
-        background: linear-gradient(90deg, rgba(41, 98, 255, 0.05) 0%, rgba(41, 98, 255, 0.02) 100%);
-        transform: translateX(4px);
+        background: rgba(41, 98, 255, 0.04);
 
         a {
           color: $primary-color !important;
@@ -116,32 +118,34 @@
       a {
         display: flex;
         align-items: center;
-        padding: 16px 24px;
+        padding: 14px 18px;
         text-transform: capitalize;
         color: $font-custom-color !important;
         font-weight: $font-weight-medium;
         font-size: 15px;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: color 0.2s ease, background-color 0.2s ease;
         position: relative;
+        border-radius: 10px;
+        margin: 4px 10px;
 
         &::before {
           content: '';
           position: absolute;
           left: 0;
-          top: 0;
-          bottom: 0;
-          width: 4px;
-          background: linear-gradient(135deg, #2962ff 0%, #1e88e5 100%);
+          top: 10px;
+          bottom: 10px;
+          width: 3px;
+          background: linear-gradient(180deg, #2962ff 0%, #10b981 100%);
           opacity: 0;
           transition: opacity 0.3s ease;
+          border-radius: 999px;
         }
 
         &.active-link {
           font-weight: $font-weight-semibold;
-          background: linear-gradient(90deg, rgba(41, 98, 255, 0.1) 0%, rgba(41, 98, 255, 0.05) 100%);
+          background: rgba(41, 98, 255, 0.08);
           color: $primary-color !important;
-          border-left: 4px solid $primary-color;
 
           &::before {
             opacity: 1;
@@ -395,6 +399,259 @@
   }
 }
 
+// Admin Dashboard Styles
+.admin-dashboard {
+  .card {
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  &__summary {
+    margin-bottom: 8px;
+  }
+
+  &__metric-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    overflow: hidden;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: linear-gradient(180deg, #2962ff 0%, #10b981 100%);
+    }
+  }
+
+  &__metric-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 10px;
+  }
+
+  &__metric-value {
+    margin: 0;
+    color: $theme-black;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__metric-note {
+    display: block;
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 13px;
+  }
+
+  &__chart-card,
+  &__insights-card,
+  &__orders-card {
+    background: #fff;
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    h4 {
+      margin: 0;
+      color: $theme-black;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: #64748b !important;
+      font-size: 14px;
+    }
+  }
+
+  &__chart-wrap {
+    height: 320px;
+  }
+
+  &__chart-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &__chart-axis {
+    fill: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  &__chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 16px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  &__chart-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &--sales {
+      background: #2962ff;
+    }
+
+    &--orders {
+      background: #10b981;
+    }
+  }
+
+  &__tooltip {
+    background: rgba(15, 23, 42, 0.96);
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.18);
+
+    strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+  }
+
+  &__insights-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  &__insight {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 14px;
+    padding: 16px 18px;
+
+    strong {
+      display: block;
+      color: $theme-black;
+      font-size: 15px;
+      font-weight: 700;
+    }
+  }
+
+  &__insight-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+}
+
+.admin-orders-table {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  overflow: hidden;
+
+  .table {
+    margin: 0;
+    background: #fff;
+  }
+
+  thead {
+    background: #f8fafc;
+
+    th {
+      border: none;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 16px 18px;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: rgba(41, 98, 255, 0.03);
+      }
+    }
+
+    td {
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      color: $font-custom-color;
+      padding: 18px;
+      vertical-align: middle;
+    }
+  }
+
+  &__label,
+  &__name {
+    display: block;
+    color: $theme-black;
+    font-weight: 600;
+  }
+
+  &__muted {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__action {
+    color: $primary-color;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: darken($primary-color, 10%);
+      text-decoration: none;
+    }
+  }
+}
+
 // Product Dashboard Styles
 .product-dashboard {
   .p-list {
@@ -448,6 +705,17 @@
     .panel-links li a {
       padding: 14px 20px;
       font-size: 14px;
+    }
+  }
+
+  .admin-dashboard {
+    &__chart-wrap {
+      height: 260px;
+    }
+
+    &__section-head {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 }

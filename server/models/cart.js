@@ -51,6 +51,17 @@ const CartSchema = new Schema({
     required: false,
     default: null
   },
+  // Checkout / shipping info (saved when user fills checkout form)
+  customerFirstName: { type: String, default: null },
+  customerLastName: { type: String, default: null },
+  customerEmail: { type: String, default: null },
+  customerPhone: { type: String, default: null },
+  customerAddress: { type: String, default: null },
+  shippingOption: {
+    name: { type: String },
+    cost: { type: Number, default: 0 },
+    deliveryTime: { type: String }
+  },
   updated: Date,
   created: {
     type: Date,

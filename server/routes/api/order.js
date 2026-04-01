@@ -111,8 +111,19 @@ router.post('/add', auth, async (req, res) => {
     const total = req.body.total;
     const user = req.user._id;
     const shippingOption = req.body.shippingOption || null;
+    const { firstName, lastName, email, phone, address } = req.body;
 
-    const order = new Order({
+    const addressTrimmed = address != null ? String(address).trim() : '';
+    const phoneTrimmed = phone != null ? String(phone).trim() : '';
+    const emailTrimmed = email != null ? String(email).trim() : '';
+
+    if (!emailTrimmed || !addressTrimmed || !phoneTrimmed) {
+      return res.status(400).json({
+        error: 'Email, address and phone number are required for checkout.'
+      });
+    }
+
+    const orderData = {
       cart,
       user,
       total,
@@ -121,9 +132,39 @@ router.post('/add', auth, async (req, res) => {
         cost: shippingOption.cost || 0,
         deliveryTime: shippingOption.deliveryTime
       } : null
-    });
+    };
 
+    // Save customer/shipping info to Order (same fields as guest checkout)
+    if (emailTrimmed) orderData.guestEmail = emailTrimmed;
+    if (firstName != null) orderData.guestFirstName = String(firstName).trim() || null;
+    if (lastName != null) orderData.guestLastName = String(lastName).trim() || null;
+    if (addressTrimmed) orderData.guestAddress = addressTrimmed;
+    if (phoneTrimmed) orderData.guestPhone = phoneTrimmed;
+
+    const order = new Order(orderData);
     const orderDoc = await order.save();
+
+    // Update cart with customer info for future reference
+    if (cart && (emailTrimmed || addressTrimmed || phoneTrimmed)) {
+      await Cart.updateOne(
+        { _id: cart },
+        {
+          $set: {
+            customerEmail: emailTrimmed || null,
+            customerFirstName: firstName != null ? String(firstName).trim() : null,
+            customerLastName: lastName != null ? String(lastName).trim() : null,
+            customerAddress: addressTrimmed || null,
+            customerPhone: phoneTrimmed || null,
+            shippingOption: shippingOption ? {
+              name: shippingOption.name,
+              cost: shippingOption.cost || 0,
+              deliveryTime: shippingOption.deliveryTime
+            } : null,
+            updated: new Date()
+          }
+        }
+      );
+    }
 
     // Populate user to get email
     await orderDoc.populate('user', 'email firstName lastName profile');
@@ -147,16 +188,17 @@ router.post('/add', auth, async (req, res) => {
 
     const orderWithTax = store.caculateTaxAmount(newOrder);
 
-    // Send order confirmation email
-    if (orderDoc.user && orderDoc.user.email) {
+    // Send order confirmation email (prefer checkout email, else user email)
+    const emailTo = orderDoc.guestEmail || (orderDoc.user && orderDoc.user.email);
+    if (emailTo) {
       try {
         await gmail.sendEmail(
-          orderDoc.user.email,
+          emailTo,
           'order-confirmation',
           null,
           orderWithTax
         );
-        console.log(`Order confirmation email sent to ${orderDoc.user.email}`);
+        console.log(`Order confirmation email sent to ${emailTo}`);
       } catch (emailError) {
         console.error('Error sending order confirmation email:', emailError);
         // Don't fail the order if email fails
@@ -277,7 +319,46 @@ router.get('/current-month', auth, async (req, res) => {
       .populate('user', 'firstName lastName email')
       .exec();
 
-    const orders = store.formatOrders(ordersDoc.filter(order => order.cart));
+    const cleanString = value =>
+      value != null && String(value).trim() !== '' ? String(value).trim() : null;
+
+    const orders = ordersDoc
+      .filter(order => order.cart)
+      .map(orderDoc => {
+        const guestFirstName = cleanString(orderDoc.guestFirstName);
+        const guestLastName = cleanString(orderDoc.guestLastName);
+        const userFirstName = cleanString(orderDoc.user?.firstName);
+        const userLastName = cleanString(orderDoc.user?.lastName);
+        const customerName =
+          [guestFirstName || userFirstName, guestLastName || userLastName]
+            .filter(Boolean)
+            .join(' ') || null;
+
+        const order = store.caculateTaxAmount({
+          _id: orderDoc._id,
+          total: parseFloat(Number(orderDoc.total.toFixed(2))),
+          created: orderDoc.created,
+          products: orderDoc?.cart?.products || [],
+          shippingOption: orderDoc.shippingOption
+            ? {
+                name: orderDoc.shippingOption.name,
+                cost: orderDoc.shippingOption.cost,
+                deliveryTime: orderDoc.shippingOption.deliveryTime
+              }
+            : null
+        });
+
+        return {
+          ...order,
+          customerName: customerName || 'Guest customer',
+          customerEmail:
+            cleanString(orderDoc.guestEmail) || cleanString(orderDoc.user?.email),
+          itemCount: Array.isArray(order.products)
+            ? order.products.reduce((sum, item) => sum + (item.quantity || 0), 0)
+            : 0,
+          primaryStatus: order.products?.[0]?.status || 'Unavailable'
+        };
+      });
 
     // Calculate daily sales for graph
     const dailySales = {};
@@ -318,9 +399,15 @@ router.get('/current-month', auth, async (req, res) => {
   }
 });
 
-// fetch orders api
+// fetch orders api (all orders – admin only; members use GET /order/me)
 router.get('/', auth, async (req, res) => {
   try {
+    if (req.user.role !== ROLES.Admin) {
+      return res.status(403).json({
+        error: 'Access denied. Admin only.'
+      });
+    }
+
     const { page = 1, limit = 10 } = req.query;
     const ordersDoc = await Order.find()
       .sort('-created')
@@ -391,52 +478,164 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// fetch order api
+// fetch order api – returns full order including guest/customer fields for Order details page
 router.get('/:orderId', auth, async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-    let orderDoc = null;
-
-    if (req.user.role === ROLES.Admin) {
-      orderDoc = await Order.findOne({ _id: orderId }).populate({
-        path: 'cart',
-        populate: {
-          path: 'products.product',
-          populate: {
-            path: 'brand'
-          }
-        }
-      });
-    } else {
-      const user = req.user._id;
-      orderDoc = await Order.findOne({ _id: orderId, user }).populate({
-        path: 'cart',
-        populate: {
-          path: 'products.product',
-          populate: {
-            path: 'brand'
-          }
-        }
-      });
-    }
-
-    if (!orderDoc || !orderDoc.cart) {
+    if (!Mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(404).json({
         message: `Cannot find order with the id: ${orderId}.`
       });
     }
+
+    const orderDoc = await Order.findOne({ _id: orderId })
+      .populate('user', 'email firstName lastName phoneNumber')
+      .populate({
+        path: 'cart',
+        populate: {
+          path: 'products.product',
+          populate: {
+            path: 'brand'
+          }
+        }
+      });
+
+    if (!orderDoc) {
+      return res.status(404).json({
+        message: `Cannot find order with the id: ${orderId}.`
+      });
+    }
+
+    const isAdmin = req.user.role === ROLES.Admin;
+    if (!isAdmin) {
+      const viewerId = String(req.user._id);
+      let ownedByAccount = false;
+      if (orderDoc.user) {
+        const ou = orderDoc.user._id || orderDoc.user;
+        ownedByAccount = String(ou) === viewerId;
+      }
+      const guestEmailNorm = orderDoc.guestEmail
+        ? String(orderDoc.guestEmail).trim().toLowerCase()
+        : '';
+      const viewerEmailNorm = req.user.email
+        ? String(req.user.email).trim().toLowerCase()
+        : '';
+      const ownedByGuestEmail =
+        !orderDoc.user &&
+        guestEmailNorm &&
+        viewerEmailNorm &&
+        guestEmailNorm === viewerEmailNorm;
+
+      if (!ownedByAccount && !ownedByGuestEmail) {
+        return res.status(403).json({
+          message: 'You do not have permission to view this order.'
+        });
+      }
+    }
+
+    // Cart may be missing (deleted); still return order with guest/contact fields and empty line items
+    const hasCart = orderDoc.cart && typeof orderDoc.cart === 'object';
+
+    const ud = orderDoc.user;
+    const userObj = ud && typeof ud === 'object' && 'email' in ud
+      ? { email: ud.email, firstName: ud.firstName, lastName: ud.lastName, phoneNumber: ud.phoneNumber }
+      : null;
+
+    const cartId = hasCart ? orderDoc.cart._id || orderDoc.cart : null;
+    const products = hasCart && orderDoc.cart.products ? orderDoc.cart.products : [];
 
     let order = {
       _id: orderDoc._id,
       total: orderDoc.total,
       created: orderDoc.created,
       totalTax: 0,
-      products: orderDoc?.cart?.products,
-      cartId: orderDoc.cart._id
+      products,
+      cartId: cartId && (cartId._id || cartId),
+      guestEmail: orderDoc.guestEmail ?? null,
+      guestFirstName: orderDoc.guestFirstName ?? null,
+      guestLastName: orderDoc.guestLastName ?? null,
+      guestAddress: orderDoc.guestAddress ?? null,
+      guestPhone: orderDoc.guestPhone ?? null,
+      user: userObj,
+      shippingOption: orderDoc.shippingOption ? { ...orderDoc.shippingOption } : null
     };
 
     order = store.caculateTaxAmount(order);
+
+    const cartDoc = orderDoc.cart && typeof orderDoc.cart === 'object' ? orderDoc.cart : null;
+    // Plain document from DB (avoids any Mongoose path edge cases)
+    const plain =
+      typeof orderDoc.toObject === 'function'
+        ? orderDoc.toObject({ virtuals: false })
+        : {};
+
+    const str = v =>
+      v != null && String(v).trim() !== '' ? String(v).trim() : null;
+
+    const pickFirst = (...candidates) => {
+      for (let i = 0; i < candidates.length; i += 1) {
+        const s = str(candidates[i]);
+        if (s) return s;
+      }
+      return null;
+    };
+
+    // Re-apply from persisted Order row first (source of truth), then cart, then user
+    order.guestEmail = pickFirst(
+      plain.guestEmail,
+      orderDoc.guestEmail,
+      order.guestEmail
+    );
+    order.guestFirstName = pickFirst(
+      plain.guestFirstName,
+      orderDoc.guestFirstName,
+      order.guestFirstName
+    );
+    order.guestLastName = pickFirst(
+      plain.guestLastName,
+      orderDoc.guestLastName,
+      order.guestLastName
+    );
+    order.guestAddress = pickFirst(
+      plain.guestAddress,
+      orderDoc.guestAddress,
+      order.guestAddress
+    );
+    order.guestPhone = pickFirst(
+      plain.guestPhone,
+      orderDoc.guestPhone,
+      order.guestPhone
+    );
+
+    if (cartDoc) {
+      if (!order.guestEmail) order.guestEmail = str(cartDoc.customerEmail);
+      if (!order.guestFirstName) order.guestFirstName = str(cartDoc.customerFirstName);
+      if (!order.guestLastName) order.guestLastName = str(cartDoc.customerLastName);
+      if (!order.guestAddress) order.guestAddress = str(cartDoc.customerAddress);
+      if (!order.guestPhone) order.guestPhone = str(cartDoc.customerPhone);
+    }
+    if (userObj) {
+      if (!order.guestEmail) order.guestEmail = str(userObj.email);
+      if (!order.guestFirstName) order.guestFirstName = str(userObj.firstName);
+      if (!order.guestLastName) order.guestLastName = str(userObj.lastName);
+      if (!order.guestPhone) order.guestPhone = str(userObj.phoneNumber);
+    }
+
+    const shipOpt = orderDoc.shippingOption ?? plain.shippingOption;
+    order.shippingOption = shipOpt && typeof shipOpt === 'object'
+      ? { name: shipOpt.name, cost: shipOpt.cost, deliveryTime: shipOpt.deliveryTime }
+      : null;
+
+    // Single object for admin UI (guest + registered checkout)
+    order.customer = {
+      email: order.guestEmail,
+      firstName: order.guestFirstName,
+      lastName: order.guestLastName,
+      fullName: [order.guestFirstName, order.guestLastName].filter(Boolean).join(' ') || null,
+      phone: order.guestPhone,
+      address: order.guestAddress
+    };
 
     res.status(200).json({
       order

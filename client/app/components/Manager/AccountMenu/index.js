@@ -14,6 +14,13 @@ import Button from '../../Common/Button';
 const AccountMenu = props => {
   const { user, isMenuOpen, links, toggleMenu } = props;
 
+  const roleLabel = (() => {
+    const role = user?.role || '';
+    if (role === 'ROLE ADMIN') return 'Admin';
+    if (role === 'ROLE MERCHANT') return 'Merchant';
+    return 'Account';
+  })();
+
   const getAllowedProvider = link => {
     if (!link.provider) return true;
 
@@ -26,13 +33,13 @@ const AccountMenu = props => {
   return (
     <div className='panel-sidebar'>
       <Button
-        text='Dashboard Menu'
+        text={`${roleLabel} Menu`}
         className={`${isMenuOpen ? 'menu-panel' : 'menu-panel collapse'}`}
         ariaExpanded={isMenuOpen ? 'true' : 'false'}
         // ariaLabel={isMenuOpen ? 'dashboard menu expanded' : 'dashboard menu collapse'}
         onClick={toggleMenu}
       />
-      <h3 className='panel-title'>Account</h3>
+      <h3 className='panel-title'>{roleLabel}</h3>
       <Navbar color='light' light expand='md'>
         <Collapse isOpen={isMenuOpen} navbar>
           <ul className='panel-links'>
