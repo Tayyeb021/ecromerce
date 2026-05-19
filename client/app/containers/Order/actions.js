@@ -222,15 +222,15 @@ export const addOrder = (customerInfo = {}) => {
     try {
       const cartId = localStorage.getItem(CART_ID);
       const cartState = getState().cart;
-      const cartTotal = cartState.cartTotal; // Product total only
+      const cartTotal = cartState.cartTotal;
       const selectedShippingOption = cartState.selectedShippingOption;
+      const discount = cartState.discount || 0;
+      const coupon = cartState.coupon;
 
-      // Calculate shipping cost
       const DEFAULT_SHIPPING_COST = 200;
-      let shippingCost = DEFAULT_SHIPPING_COST; // Default to 200 if no option
-      
+      let shippingCost = DEFAULT_SHIPPING_COST;
       if (selectedShippingOption) {
-        if (selectedShippingOption.freeShippingThreshold && 
+        if (selectedShippingOption.freeShippingThreshold &&
             cartTotal >= selectedShippingOption.freeShippingThreshold) {
           shippingCost = 0;
         } else {
@@ -238,12 +238,11 @@ export const addOrder = (customerInfo = {}) => {
         }
       }
 
-      // Total includes products + shipping (tax will be calculated on backend)
-      const orderTotal = cartTotal + shippingCost;
+      const orderTotal = Math.max(0, cartTotal + shippingCost - discount);
 
       const orderData = {
         cartId,
-        total: orderTotal, // Total with shipping (tax calculated separately on backend)
+        total: orderTotal,
         shippingOption: selectedShippingOption ? {
           name: selectedShippingOption.name,
           cost: shippingCost,
@@ -253,6 +252,8 @@ export const addOrder = (customerInfo = {}) => {
           cost: shippingCost,
           deliveryTime: '5-7 business days'
         },
+        couponCode: coupon ? coupon.code : null,
+        discount,
         ...customerInfo
       };
 
@@ -292,6 +293,8 @@ export const placeGuestOrder = (guestData) => {
     const cartItems = cartState.cartItems;
     const cartTotal = cartState.cartTotal;
     const selectedShippingOption = cartState.selectedShippingOption;
+    const discount = cartState.discount || 0;
+    const coupon = cartState.coupon;
 
     if (!email || !cartItems || cartItems.length === 0) return;
 
@@ -311,7 +314,7 @@ export const placeGuestOrder = (guestData) => {
         shippingCost = selectedShippingOption.cost || DEFAULT_SHIPPING_COST;
       }
     }
-    const total = cartTotal + shippingCost;
+    const total = Math.max(0, cartTotal + shippingCost - discount);
     const shippingOption = selectedShippingOption ? {
       name: selectedShippingOption.name,
       cost: shippingCost,
@@ -333,7 +336,9 @@ export const placeGuestOrder = (guestData) => {
         phone: phone ? String(phone).trim() : '',
         products,
         total,
-        shippingOption
+        shippingOption,
+        couponCode: coupon ? coupon.code : null,
+        discount
       });
       dispatch(push(`/order/success/${response.data.order._id}`));
       dispatch(clearCart());

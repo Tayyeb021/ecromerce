@@ -122,7 +122,12 @@ exports.formatOrders = orders => {
       _id: order._id,
       total: parseFloat(Number(order.total.toFixed(2))),
       created: order.created,
-      products: order?.cart?.products
+      products: order?.cart?.products,
+      shippingOption: order.shippingOption || null,
+      couponCode: order.couponCode || null,
+      discount: order.discount || 0,
+      guestEmail: order.guestEmail || null,
+      user: order.user || null
     };
   });
 

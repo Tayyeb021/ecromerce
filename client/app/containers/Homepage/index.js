@@ -311,6 +311,36 @@ class Homepage extends React.PureComponent {
           </div>
         </div>
 
+        {/* Why Choose Us Section */}
+        <section className='why-choose-us'>
+          <Container>
+            <div className='section-header'>
+              <div className='section-header-content'>
+                <h2 className='section-title'>Why Shop With Us?</h2>
+                <p className='section-subtitle'>We go the extra mile so you can shop with confidence</p>
+              </div>
+            </div>
+            <Row>
+              {[
+                { icon: 'fa-medal',      title: 'Quality Products',  desc: 'Every product is verified for quality and authenticity before listing.' },
+                { icon: 'fa-truck',      title: 'Fast Delivery',     desc: 'Same-day dispatch on orders placed before 2 PM.' },
+                { icon: 'fa-lock',       title: '100% Secure',       desc: 'Your payments and personal data are fully protected.' },
+                { icon: 'fa-headphones', title: 'Dedicated Support', desc: 'Our team is available 7 days a week to help you.' },
+              ].map((item, i) => (
+                <Col key={i} xs='12' sm='6' md='3'>
+                  <div className='why-card'>
+                    <div className='why-icon-wrap'>
+                      <i className={`fa ${item.icon} why-icon`} />
+                    </div>
+                    <h5>{item.title}</h5>
+                    <p>{item.desc}</p>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+
         {/* Categories Section */}
         {displayCategories.length > 0 && (
           <section className='homepage-categories-section'>

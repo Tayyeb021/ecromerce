@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
 import Newsletter from '../../../containers/Newsletter';
+import { FACEBOOK_PAGE_URL } from '../../../constants';
 
 const Footer = () => {
   const customerServiceLinks = [
@@ -86,7 +87,7 @@ const Footer = () => {
         </div>
         <ul className='footer-social-item'>
           <li>
-            <a href='/#facebook' rel='noreferrer noopener' target='_blank' aria-label='Facebook'>
+            <a href={FACEBOOK_PAGE_URL} rel='noreferrer noopener' target='_blank' aria-label='Facebook'>
               <span className='facebook-icon' />
             </a>
           </li>

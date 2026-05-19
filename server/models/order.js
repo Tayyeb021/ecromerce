@@ -27,6 +27,8 @@ const OrderSchema = new Schema({
     cost: { type: Number, default: 0 },
     deliveryTime: { type: String }
   },
+  couponCode: { type: String, default: null },
+  discount: { type: Number, default: 0 },
   updated: Date,
   created: {
     type: Date,

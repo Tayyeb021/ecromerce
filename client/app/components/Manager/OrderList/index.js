@@ -86,6 +86,12 @@ const OrderList = ({ orders, user, onStatusChange }) => {
                 <div style={{ fontWeight: 700, color: '#2962ff', fontSize: 14 }}>
                   PKR {order.totalWithTax ? order.totalWithTax.toFixed(2) : '0.00'}
                 </div>
+                {order.discount > 0 && (
+                  <div style={{ fontSize: 11, color: '#10b981', fontWeight: 600 }}>
+                    <i className='fa fa-tag' style={{ marginRight: 3 }} />
+                    {order.couponCode} &minus; PKR {Number(order.discount).toFixed(2)}
+                  </div>
+                )}
                 <div style={{ fontSize: 11, color: '#94a3b8' }}>
                   {order.user?.email || order.guestEmail || 'Guest'}
                 </div>

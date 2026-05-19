@@ -1140,6 +1140,57 @@
     }
   }
 
+  // ─── Why Choose Us ───────────────────────────────────────────────────────────
+  .why-choose-us {
+    padding: 64px 0 48px;
+    background: #f8fafc;
+
+    .why-card {
+      text-align: center;
+      padding: 36px 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+      &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(41, 98, 255, 0.1);
+      }
+
+      .why-icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2962ff 0%, #4facfe 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+
+      .why-icon {
+        font-size: 28px;
+        color: #ffffff;
+      }
+
+      h5 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 10px;
+      }
+
+      p {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
   // ─── View All Products button ─────────────────────────────────────────────────
   .view-all-wrapper {
     text-align: center;

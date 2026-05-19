@@ -224,49 +224,24 @@ const calculatePurchaseQuantity = inventory => {
 export const fetchShippingOptions = () => {
   return async (dispatch, getState) => {
     try {
-      console.log('Fetching shipping options from:', `${API_URL}/shipping/list`);
       const response = await axios.get(`${API_URL}/shipping/list`);
-      
       const shippingOptions = response.data.shippingOptions || [];
-      console.log('Received shipping options:', shippingOptions);
-      
+
       dispatch({
         type: FETCH_SHIPPING_OPTIONS,
         payload: shippingOptions
       });
 
-      // Auto-select default shipping option if available and none selected
       const currentSelected = getState().cart.selectedShippingOption;
-      console.log('Current selected shipping option:', currentSelected);
-      
       if (!currentSelected && shippingOptions.length > 0) {
-        // First try to find default option
         let selectedOption = shippingOptions.find(opt => opt.isDefault && opt.isActive);
-        console.log('Default option found:', selectedOption);
-        
-        // If no default, use first active option
-        if (!selectedOption) {
-          selectedOption = shippingOptions.find(opt => opt.isActive);
-          console.log('First active option found:', selectedOption);
-        }
-        
-        // If still no option, use first one
-        if (!selectedOption && shippingOptions.length > 0) {
-          selectedOption = shippingOptions[0];
-          console.log('Using first option:', selectedOption);
-        }
-        
+        if (!selectedOption) selectedOption = shippingOptions.find(opt => opt.isActive);
+        if (!selectedOption) selectedOption = shippingOptions[0];
         if (selectedOption) {
-          console.log('Auto-selecting shipping option:', selectedOption);
-          dispatch({
-            type: SET_SELECTED_SHIPPING_OPTION,
-            payload: selectedOption
-          });
+          dispatch({ type: SET_SELECTED_SHIPPING_OPTION, payload: selectedOption });
         }
       }
     } catch (error) {
-      console.error('Error fetching shipping options:', error);
-      console.error('Error details:', error.response?.data || error.message);
       // If API fails, dispatch empty array so component can use default
       dispatch({
         type: FETCH_SHIPPING_OPTIONS,

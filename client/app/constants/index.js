@@ -42,3 +42,5 @@ export const EMAIL_PROVIDER = {
   Google: 'Google',
   Facebook: 'Facebook'
 };
+
+export const FACEBOOK_PAGE_URL = 'https://www.facebook.com/share/18VqA3ygYU/';

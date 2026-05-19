@@ -6,6 +6,7 @@ const Mongoose = require('mongoose');
 const Order = require('../../models/order');
 const Cart = require('../../models/cart');
 const Product = require('../../models/product');
+const Coupon = require('../../models/coupon');
 const auth = require('../../middleware/auth');
 const gmail = require('../../services/gmail');
 const keys = require('../../config/keys');
@@ -15,7 +16,7 @@ const { ROLES, CART_ITEM_STATUS } = require('../../constants');
 // Guest checkout: POST /api/order/guest (no auth), body: email, address, phone, firstName?, lastName?, products, total, shippingOption
 router.post('/guest', async (req, res) => {
   try {
-    const { email, firstName, lastName, address, phone, products: items, total, shippingOption } = req.body;
+    const { email, firstName, lastName, address, phone, products: items, total, shippingOption, couponCode, discount } = req.body;
 
     if (!email || !items || !Array.isArray(items) || items.length === 0 || total == null) {
       return res.status(400).json({
@@ -63,9 +64,15 @@ router.post('/guest', async (req, res) => {
         name: shippingOption.name,
         cost: shippingOption.cost != null ? Number(shippingOption.cost) : 0,
         deliveryTime: shippingOption.deliveryTime
-      } : null
+      } : null,
+      couponCode: couponCode || null,
+      discount: discount ? Number(discount) : 0
     });
     const orderDoc = await order.save();
+
+    if (couponCode) {
+      await Coupon.updateOne({ code: couponCode.toUpperCase() }, { $inc: { usedCount: 1 } });
+    }
 
     const cartDocPopulated = await Cart.findById(orderDoc.cart._id).populate({
       path: 'products.product',
@@ -114,7 +121,7 @@ router.post('/add', auth, async (req, res) => {
     const total = req.body.total;
     const user = req.user._id;
     const shippingOption = req.body.shippingOption || null;
-    const { firstName, lastName, email, phone, address } = req.body;
+    const { firstName, lastName, email, phone, address, couponCode, discount } = req.body;
 
     const addressTrimmed = address != null ? String(address).trim() : '';
     const phoneTrimmed = phone != null ? String(phone).trim() : '';
@@ -134,7 +141,9 @@ router.post('/add', auth, async (req, res) => {
         name: shippingOption.name,
         cost: shippingOption.cost || 0,
         deliveryTime: shippingOption.deliveryTime
-      } : null
+      } : null,
+      couponCode: couponCode || null,
+      discount: discount ? Number(discount) : 0
     };
 
     // Save customer/shipping info to Order (same fields as guest checkout)
@@ -146,6 +155,10 @@ router.post('/add', auth, async (req, res) => {
 
     const order = new Order(orderData);
     const orderDoc = await order.save();
+
+    if (couponCode) {
+      await Coupon.updateOne({ code: couponCode.toUpperCase() }, { $inc: { usedCount: 1 } });
+    }
 
     // Update cart with customer info for future reference
     if (cart && (emailTrimmed || addressTrimmed || phoneTrimmed)) {
@@ -562,7 +575,9 @@ router.get('/:orderId', auth, async (req, res) => {
       guestAddress: orderDoc.guestAddress ?? null,
       guestPhone: orderDoc.guestPhone ?? null,
       user: userObj,
-      shippingOption: orderDoc.shippingOption ? { ...orderDoc.shippingOption } : null
+      shippingOption: orderDoc.shippingOption ? { ...orderDoc.shippingOption } : null,
+      couponCode: orderDoc.couponCode || null,
+      discount: orderDoc.discount || 0
     };
 
     order = store.caculateTaxAmount(order);

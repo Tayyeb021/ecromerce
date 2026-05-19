@@ -26,7 +26,11 @@ const CheckoutPage = (props) => {
     placeOrder,
     placeGuestOrder,
     isPlacingOrder,
-    toggleCart
+    toggleCart,
+    coupon,
+    discount,
+    applyCoupon,
+    removeCoupon
   } = props;
 
   const history = useHistory();
@@ -126,6 +130,10 @@ const CheckoutPage = (props) => {
                 selectedShippingOption={selectedShippingOption}
                 fetchShippingOptions={fetchShippingOptions}
                 setSelectedShippingOption={setSelectedShippingOption}
+                coupon={coupon}
+                discount={discount}
+                onApplyCoupon={applyCoupon}
+                onRemoveCoupon={removeCoupon}
               />
 
               {authenticated ? (
@@ -290,7 +298,9 @@ const mapStateToProps = (state) => ({
   authenticated: state.authentication.authenticated,
   shippingOptions: state.cart.shippingOptions,
   selectedShippingOption: state.cart.selectedShippingOption,
-  isPlacingOrder: state.order.isPlacingOrder
+  isPlacingOrder: state.order.isPlacingOrder,
+  coupon: state.cart.coupon,
+  discount: state.cart.discount
 });
 
 export default connect(mapStateToProps, actions)(CheckoutPage);

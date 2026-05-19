@@ -28,6 +28,21 @@ const OrderSummary = props => {
           })()}
         </p>
       </div>
+      {order.discount > 0 && (
+        <div className='d-flex align-items-center summary-item'>
+          <p className='summary-label' style={{ color: '#10b981' }}>
+            Discount
+            {order.couponCode && (
+              <small className='d-block' style={{ fontSize: '0.8rem', fontWeight: 600 }}>
+                Code: {order.couponCode}
+              </small>
+            )}
+          </p>
+          <p className='summary-value ml-auto' style={{ color: '#10b981' }}>
+            - PKR {Number(order.discount).toFixed(2)}
+          </p>
+        </div>
+      )}
       <div className='d-flex align-items-center summary-item'>
         <p className='summary-label'>Est. Sales Tax</p>
         <p className='summary-value ml-auto'>PKR {order.totalTax ? order.totalTax.toFixed(2) : '0.00'}</p>
