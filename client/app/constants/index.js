@@ -2,10 +2,7 @@
 const rawApiUrl = process.env.API_URL || 'https://a-z-on-buz.com/api';
 export const API_URL = typeof rawApiUrl === 'string' ? rawApiUrl.trim().replace(/\/+$/, '') : rawApiUrl;
 
-export const SOCKET_URL =
-  window.location.host.indexOf('localhost') >= 0
-    ? 'http://ecromerce-production.up.railway.app'
-    : window.location.host;
+export const SOCKET_URL = 'https://ecromerce-production.up.railway.app';
 
 export const ROLES = {
   Admin: 'ROLE ADMIN',

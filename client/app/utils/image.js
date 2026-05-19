@@ -25,14 +25,14 @@ const getBaseUrl = () => {
   
   // Fallback to localhost for development
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    return 'http://ecromerce-production.up.railway.app';
+    return 'https://ecromerce-production.up.railway.app';
   }
   
   // Fallback: try to construct from current window location
   if (typeof window !== 'undefined' && window.location) {
     // If frontend is on a different port, assume backend is on 3000
     if (window.location.port && window.location.port !== '3000') {
-      return `http://${window.location.hostname}:3000`;
+      return 'https://ecromerce-production.up.railway.app';
     }
     return `${window.location.protocol}//${window.location.host}`;
   }
