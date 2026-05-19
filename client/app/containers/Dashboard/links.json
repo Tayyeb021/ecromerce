@@ -1,51 +1,43 @@
 {
   "ROLE ADMIN": [
-    { "to": "", "name": "Dashboard", "prefix": "/dashboard" },
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "/product", "name": "Products", "prefix": "/dashboard" },
-    { "to": "/brand", "name": "Brand", "prefix": "/dashboard" },
-    { "to": "/shipping", "name": "Shipping Options", "prefix": "/dashboard" },
-    { "to": "/banner", "name": "Banners", "prefix": "/dashboard" },
-    { "to": "/users", "name": "Users", "prefix": "/dashboard" },
-    { "to": "/merchant", "name": "Merchants", "prefix": "/dashboard" },
-    { "to": "/review", "name": "Reviews", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/account", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
+    { "to": "",          "name": "Dashboard",        "prefix": "/dashboard", "icon": "fa-tachometer" },
+    { "to": "/orders",   "name": "Orders",            "prefix": "/dashboard", "icon": "fa-shopping-bag" },
+    { "to": "/product",  "name": "Products",          "prefix": "/dashboard", "icon": "fa-cube" },
+    { "to": "/category", "name": "Category",          "prefix": "/dashboard", "icon": "fa-th-large" },
+    { "to": "/brand",    "name": "Brand",             "prefix": "/dashboard", "icon": "fa-tag" },
+    { "to": "/shipping", "name": "Shipping Options",  "prefix": "/dashboard", "icon": "fa-truck" },
+    { "to": "/banner",   "name": "Banners",           "prefix": "/dashboard", "icon": "fa-picture-o" },
+    { "to": "/setting",  "name": "Settings",          "prefix": "/dashboard", "icon": "fa-cog" },
+    { "to": "/coupon",   "name": "Coupons",           "prefix": "/dashboard", "icon": "fa-ticket" },
+    { "divider": true, "sectionTitle": "People" },
+    { "to": "/users",    "name": "Users",             "prefix": "/dashboard", "icon": "fa-users" },
+    { "to": "/merchant", "name": "Merchants",         "prefix": "/dashboard", "icon": "fa-briefcase" },
+    { "to": "/review",   "name": "Reviews",           "prefix": "/dashboard", "icon": "fa-star" },
+    { "to": "/wishlist", "name": "WishList",          "prefix": "/dashboard", "icon": "fa-heart" },
+    { "divider": true, "sectionTitle": "Account" },
+    { "to": "/account",  "name": "Account Details",  "prefix": "/dashboard", "icon": "fa-user" },
+    { "to": "/security", "name": "Account Security", "prefix": "/dashboard", "icon": "fa-lock", "provider": ["Email"] },
+    { "to": "/address",  "name": "Address",          "prefix": "/dashboard", "icon": "fa-map-marker" },
+    { "to": "/support",  "name": "Support",                                   "icon": "fa-life-ring" }
   ],
   "ROLE MERCHANT": [
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "/product", "name": "Products", "prefix": "/dashboard" },
-    { "to": "/brand", "name": "Brand", "prefix": "/dashboard" },
-    { "to": "", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
+    { "to": "/orders",   "name": "Orders",            "prefix": "/dashboard", "icon": "fa-shopping-bag" },
+    { "to": "/product",  "name": "Products",          "prefix": "/dashboard", "icon": "fa-cube" },
+    { "to": "/brand",    "name": "Brand",             "prefix": "/dashboard", "icon": "fa-tag" },
+    { "divider": true, "sectionTitle": "Account" },
+    { "to": "",          "name": "Account Details",  "prefix": "/dashboard", "icon": "fa-user" },
+    { "to": "/security", "name": "Account Security", "prefix": "/dashboard", "icon": "fa-lock", "provider": ["Email"] },
+    { "to": "/address",  "name": "Address",          "prefix": "/dashboard", "icon": "fa-map-marker" },
+    { "to": "/wishlist", "name": "WishList",         "prefix": "/dashboard", "icon": "fa-heart" },
+    { "to": "/support",  "name": "Support",                                   "icon": "fa-life-ring" }
   ],
   "ROLE MEMBER": [
-    { "to": "/orders", "name": "Orders", "prefix": "/dashboard" },
-    { "to": "", "name": "Account Details", "prefix": "/dashboard" },
-    {
-      "to": "/security",
-      "name": "Account Security",
-      "prefix": "/dashboard",
-      "provider": ["Email"]
-    },
-    { "to": "/address", "name": "Address", "prefix": "/dashboard" },
-    { "to": "/wishlist", "name": "WishList", "prefix": "/dashboard" },
-    { "to": "/support", "name": "Support" }
+    { "to": "/orders",   "name": "Orders",            "prefix": "/dashboard", "icon": "fa-shopping-bag" },
+    { "divider": true, "sectionTitle": "Account" },
+    { "to": "",          "name": "Account Details",  "prefix": "/dashboard", "icon": "fa-user" },
+    { "to": "/security", "name": "Account Security", "prefix": "/dashboard", "icon": "fa-lock", "provider": ["Email"] },
+    { "to": "/address",  "name": "Address",          "prefix": "/dashboard", "icon": "fa-map-marker" },
+    { "to": "/wishlist", "name": "WishList",         "prefix": "/dashboard", "icon": "fa-heart" },
+    { "to": "/support",  "name": "Support",                                   "icon": "fa-life-ring" }
   ]
 }

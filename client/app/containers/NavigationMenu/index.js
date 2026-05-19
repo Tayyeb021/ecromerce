@@ -19,39 +19,60 @@ import { CloseIcon } from '../../components/Common/Icon';
 class NavigationMenu extends React.PureComponent {
   getCategoryIcon = (categoryName) => {
     const name = categoryName.toLowerCase();
-    const iconMap = {
-      electronics: 'fa-laptop',
-      clothing: 'fa-tshirt',
-      shoes: 'fa-shoe-prints',
-      accessories: 'fa-gem',
-      books: 'fa-book',
-      home: 'fa-home',
-      kitchen: 'fa-utensils',
-      sports: 'fa-futbol',
-      beauty: 'fa-spa',
-      toys: 'fa-puzzle-piece',
-      furniture: 'fa-couch',
-      mobile: 'fa-mobile-alt',
-      computer: 'fa-desktop',
-      watch: 'fa-clock',
-      bag: 'fa-shopping-bag',
-      jewelry: 'fa-ring',
-      health: 'fa-heartbeat',
-      automotive: 'fa-car',
-      music: 'fa-music',
-      pet: 'fa-paw',
-      garden: 'fa-seedling',
-      food: 'fa-hamburger',
-      drink: 'fa-wine-glass',
-      default: 'fa-folder-open'
-    };
+    // All icons are Font Awesome 4.7 compatible
+    const iconMap = [
+      ['home',        'fa-home'],
+      ['electron',    'fa-laptop'],
+      ['cloth',       'fa-shopping-bag'],
+      ['shirt',       'fa-shopping-bag'],
+      ['fashion',     'fa-shopping-bag'],
+      ['shoe',        'fa-tag'],
+      ['footwear',    'fa-tag'],
+      ['accessori',   'fa-diamond'],
+      ['jewel',       'fa-diamond'],
+      ['book',        'fa-book'],
+      ['kitchen',     'fa-cutlery'],
+      ['food',        'fa-cutlery'],
+      ['sport',       'fa-futbol-o'],
+      ['game',        'fa-gamepad'],
+      ['toy',         'fa-puzzle-piece'],
+      ['beauty',      'fa-leaf'],
+      ['health',      'fa-heartbeat'],
+      ['furniture',   'fa-bed'],
+      ['mobile',      'fa-mobile'],
+      ['phone',       'fa-mobile'],
+      ['computer',    'fa-desktop'],
+      ['laptop',      'fa-laptop'],
+      ['watch',       'fa-clock-o'],
+      ['bag',         'fa-shopping-bag'],
+      ['automat',     'fa-car'],
+      ['car',         'fa-car'],
+      ['music',       'fa-music'],
+      ['pet',         'fa-paw'],
+      ['garden',      'fa-leaf'],
+      ['plant',       'fa-leaf'],
+      ['drink',       'fa-glass'],
+      ['movie',       'fa-film'],
+      ['film',        'fa-film'],
+      ['video',       'fa-film'],
+      ['industri',    'fa-industry'],
+      ['tool',        'fa-wrench'],
+      ['hardware',    'fa-wrench'],
+      ['office',      'fa-briefcase'],
+      ['stationer',   'fa-pencil'],
+      ['gift',        'fa-gift'],
+      ['toy',         'fa-puzzle-piece'],
+      ['baby',        'fa-child'],
+      ['kids',        'fa-child'],
+      ['travel',      'fa-plane'],
+      ['luggage',     'fa-suitcase'],
+    ];
 
-    for (const [key, icon] of Object.entries(iconMap)) {
-      if (name.includes(key)) {
-        return icon;
-      }
+    for (const [key, icon] of iconMap) {
+      if (name.includes(key)) return icon;
     }
-    return iconMap.default;
+    // Fallback: use first letter color-coded circle via CSS
+    return 'fa-tag';
   };
 
   render() {
@@ -90,13 +111,6 @@ class NavigationMenu extends React.PureComponent {
             />
           )}
         </div>
-        <div className='menu-logo'>
-          <Link to='/' className='menu-logo-link'>
-            <div className='menu-logo-wrapper'>
-              <img src='/images/logo.svg' alt='A-Z On-Buz' className='menu-logo-img' />
-            </div>
-          </Link>
-        </div>
         <div className='menu-body'>
           <Container className='px-0'>
             <h3 className='menu-title text-uppercase'>
@@ -113,7 +127,7 @@ class NavigationMenu extends React.PureComponent {
                       activeClassName='active-link'
                       exact
                     >
-                      <i className={`fa ${this.getCategoryIcon(link.name)}`} />
+                      <i className={`fa ${link.icon || this.getCategoryIcon(link.name)}`} />
                       <span>{link.name}</span>
                     </NavLink>
                   </li>

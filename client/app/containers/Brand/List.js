@@ -34,7 +34,13 @@ class List extends React.PureComponent {
           {isLoading ? (
             <LoadingIndicator inline />
           ) : brands.length > 0 ? (
-            <BrandList brands={brands} user={user} />
+            <BrandList
+              brands={brands}
+              user={user}
+              onDelete={this.props.deleteBrand}
+              onActivate={this.props.activateBrand}
+              history={history}
+            />
           ) : (
             <NotFound message='No brands found.' />
           )}

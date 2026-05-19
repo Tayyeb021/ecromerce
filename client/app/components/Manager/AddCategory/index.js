@@ -12,6 +12,7 @@ import Input from '../../Common/Input';
 import Switch from '../../Common/Switch';
 import Button from '../../Common/Button';
 import SelectOption from '../../Common/SelectOption';
+import IconPicker from '../../Common/IconPicker';
 
 const AddCategory = props => {
   const {
@@ -21,6 +22,8 @@ const AddCategory = props => {
     categoryChange,
     addCategory
   } = props;
+
+  const { icon = '' } = categoryFormData;
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -67,6 +70,12 @@ const AddCategory = props => {
               handleSelectChange={value => {
                 categoryChange('products', value);
               }}
+            />
+          </Col>
+          <Col xs='12' md='12' className='my-2'>
+            <IconPicker
+              value={icon}
+              onChange={val => categoryChange('icon', val)}
             />
           </Col>
           <Col xs='12' md='12' className='my-2'>

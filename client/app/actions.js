@@ -33,6 +33,7 @@ import * as wishlist from './containers/WishList/actions';
 import * as adminDashboard from './containers/AdminDashboard/actions';
 import * as banner from './containers/Banner/actions';
 import * as shipping from './containers/Shipping/actions';
+import * as siteSetting from './containers/SiteSetting/actions';
 
 export default function mapDispatchToProps(dispatch) {
   return bindActionCreators(
@@ -63,7 +64,8 @@ export default function mapDispatchToProps(dispatch) {
       ...wishlist,
       ...adminDashboard,
       ...banner,
-      ...shipping
+      ...shipping,
+      ...siteSetting
     },
     dispatch
   );

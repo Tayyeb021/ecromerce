@@ -903,3 +903,359 @@
     }
   }
 }
+
+// ─── Hero overlay ──────────────────────────────────────────────────────────────
+.homepage {
+  .hero-main-inner {
+    position: relative;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 32px 36px;
+    background: linear-gradient(to top, rgba(10, 18, 40, 0.82) 0%, transparent 100%);
+    border-radius: 0 0 18px 18px;
+    pointer-events: none;
+
+    .hero-title {
+      font-size: 30px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+      line-height: 1.2;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      letter-spacing: -0.5px;
+
+      @include media-breakpoint-down(md) {
+        font-size: 22px;
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.88);
+      margin: 0 0 20px 0;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-cta {
+      pointer-events: all;
+
+      .btn-lg {
+        font-size: 15px;
+        font-weight: 700;
+        padding: 10px 26px;
+        border-radius: 10px;
+      }
+
+      .btn-outline-light {
+        border-width: 2px;
+      }
+    }
+  }
+
+  // ─── Category gradient avatars ───────────────────────────────────────────────
+  .category-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    .category-card:hover & {
+      transform: scale(1.08) rotate(-3deg);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.2);
+    }
+  }
+
+  // ─── Product card hover overlay ───────────────────────────────────────────────
+  .product-view-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    border-radius: inherit;
+
+    .product-view-btn {
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      transition: background 0.2s ease, color 0.2s ease;
+
+      &:hover {
+        background: #2962ff;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .item-box:hover .product-view-overlay {
+    opacity: 1;
+  }
+
+  // ─── Stats Trust Bar ─────────────────────────────────────────────────────────
+  .stats-bar {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+
+    .stats-row {
+      margin: 0;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 10px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+
+      &:last-child {
+        border-right: none;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1;
+        margin-bottom: 6px;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: rgba(255,255,255,0.6);
+        font-weight: 500;
+        text-align: center;
+        letter-spacing: 0.3px;
+      }
+
+      @include media-breakpoint-down(sm) {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 12px 10px;
+
+        &:last-child { border-bottom: none; }
+
+        .stat-value { font-size: 22px; }
+      }
+    }
+  }
+
+  // ─── Flash Deals Banner ───────────────────────────────────────────────────────
+  .flash-deals-banner {
+    background: linear-gradient(90deg, #f5576c 0%, #f093fb 50%, #f5576c 100%);
+    background-size: 200% auto;
+    animation: flashSlide 4s linear infinite;
+    padding: 14px 0;
+
+    @keyframes flashSlide {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .flash-banner-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .flash-badge {
+      background: rgba(255,255,255,0.25);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .flash-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+
+      strong {
+        font-weight: 900;
+        font-size: 17px;
+      }
+    }
+
+    .flash-cta {
+      background: #ffffff;
+      color: #f5576c;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      &:hover {
+        transform: scale(1.04);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      }
+    }
+  }
+
+  // ─── View All Products button ─────────────────────────────────────────────────
+  .view-all-wrapper {
+    text-align: center;
+    margin-top: 40px;
+
+    .view-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 36px;
+      font-size: 15px;
+      font-weight: 700;
+      background: transparent;
+      color: #2962ff;
+      border: 2px solid #2962ff;
+      border-radius: 10px;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      text-decoration: none;
+
+      &:hover {
+        background: #2962ff;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(41, 98, 255, 0.3);
+      }
+
+      .fa {
+        font-size: 13px;
+        transition: transform 0.2s ease;
+      }
+
+      &:hover .fa {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  // ─── Product badges ───────────────────────────────────────────────────────────
+  .product-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 11;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+
+    &.badge-new {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    &.badge-sale {
+      background: #f5576c;
+      color: #ffffff;
+    }
+  }
+
+  // ─── Newsletter CTA ───────────────────────────────────────────────────────────
+  .newsletter-cta {
+    padding: 64px 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0b1220 100%);
+    margin-top: 20px;
+
+    .newsletter-content {
+      max-width: 560px;
+      margin: 0 auto;
+      text-align: center;
+
+      h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 12px;
+        letter-spacing: -0.3px;
+      }
+
+      p {
+        font-size: 15px;
+        color: rgba(255,255,255,0.75);
+        margin-bottom: 28px;
+      }
+    }
+
+    .newsletter-form {
+      p { display: none; }
+
+      .subscribe {
+        display: flex;
+        gap: 10px;
+
+        input {
+          background: rgba(255,255,255,0.1);
+          border: 2px solid rgba(255,255,255,0.18);
+          color: #ffffff;
+          border-radius: 10px;
+          padding: 10px 16px;
+          font-size: 15px;
+
+          &::placeholder { color: rgba(255,255,255,0.5); }
+          &:focus {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(41,98,255,0.7);
+            outline: none;
+          }
+        }
+
+        button {
+          font-weight: 700;
+          border-radius: 10px;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}

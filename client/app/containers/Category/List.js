@@ -33,7 +33,12 @@ class List extends React.PureComponent {
           {isLoading ? (
             <LoadingIndicator inline />
           ) : categories.length > 0 ? (
-            <CategoryList categories={categories} />
+            <CategoryList
+              categories={categories}
+              onDelete={this.props.deleteCategory}
+              onActivate={this.props.activateCategory}
+              history={history}
+            />
           ) : (
             <NotFound message='No categories found.' />
           )}

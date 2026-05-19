@@ -83,6 +83,7 @@ class Navigation extends React.PureComponent {
           <img
             className='item-image'
             src={getImageUrl(suggestion.imageUrl)}
+            alt={suggestion.name}
           />
           <div>
             <Container>
@@ -323,8 +324,8 @@ class Navigation extends React.PureComponent {
           </div>
         )}
 
-        {/* Always visible side menu on desktop, drawer on mobile */}
-        {categories && categories.length > 0 && (
+        {/* Always visible side menu on desktop, drawer on mobile — hidden for admins */}
+        {categories && categories.length > 0 && !(authenticated && user && user.role === 'ROLE ADMIN') && (
           <>
             <div className='side-menu-container d-none d-md-block'>
               <div className='side-menu'>

@@ -8,6 +8,7 @@ const Cart = require('../../models/cart');
 const Product = require('../../models/product');
 const auth = require('../../middleware/auth');
 const gmail = require('../../services/gmail');
+const keys = require('../../config/keys');
 const store = require('../../utils/store');
 const { ROLES, CART_ITEM_STATUS } = require('../../constants');
 
@@ -82,14 +83,16 @@ router.post('/guest', async (req, res) => {
     const orderWithTax = store.caculateTaxAmount(newOrder);
 
     try {
-      await gmail.sendEmail(
-        orderDoc.guestEmail,
-        'order-confirmation',
-        null,
-        orderWithTax
-      );
+      await gmail.sendEmail(orderDoc.guestEmail, 'order-confirmation', null, orderWithTax);
     } catch (emailErr) {
       console.error('Guest order confirmation email error:', emailErr);
+    }
+
+    // Notify admin of new order
+    try {
+      await gmail.sendEmail(keys.adminEmail, 'admin-new-order', null, orderWithTax);
+    } catch (emailErr) {
+      console.error('Admin new-order notification error:', emailErr);
     }
 
     res.status(200).json({
@@ -192,17 +195,18 @@ router.post('/add', auth, async (req, res) => {
     const emailTo = orderDoc.guestEmail || (orderDoc.user && orderDoc.user.email);
     if (emailTo) {
       try {
-        await gmail.sendEmail(
-          emailTo,
-          'order-confirmation',
-          null,
-          orderWithTax
-        );
+        await gmail.sendEmail(emailTo, 'order-confirmation', null, orderWithTax);
         console.log(`Order confirmation email sent to ${emailTo}`);
       } catch (emailError) {
         console.error('Error sending order confirmation email:', emailError);
-        // Don't fail the order if email fails
       }
+    }
+
+    // Notify admin of new order
+    try {
+      await gmail.sendEmail(keys.adminEmail, 'admin-new-order', null, orderWithTax);
+    } catch (emailError) {
+      console.error('Admin new-order notification error:', emailError);
     }
 
     res.status(200).json({
@@ -681,10 +685,17 @@ router.put('/status/item/:itemId', auth, async (req, res) => {
 
     await Cart.updateOne(
       { 'products._id': itemId },
-      {
-        'products.$.status': status
-      }
+      { 'products.$.status': status }
     );
+
+    // Fetch order to get customer contact info for email
+    const orderDoc = await Order.findById(orderId).populate('user', 'email firstName lastName');
+    const customerEmail = orderDoc
+      ? (orderDoc.guestEmail || orderDoc.user?.email)
+      : null;
+    const customerName = orderDoc
+      ? ([orderDoc.guestFirstName || orderDoc.user?.firstName, orderDoc.guestLastName || orderDoc.user?.lastName].filter(Boolean).join(' ') || 'Customer')
+      : 'Customer';
 
     if (status === CART_ITEM_STATUS.Cancelled) {
       await Product.updateOne(
@@ -693,28 +704,58 @@ router.put('/status/item/:itemId', auth, async (req, res) => {
       );
 
       const cart = await Cart.findOne({ _id: cartId });
-      const items = cart.products.filter(
+      const cancelledItems = cart.products.filter(
         item => item.status === CART_ITEM_STATUS.Cancelled
       );
 
-      // All items are cancelled => Cancel order
-      if (cart.products.length === items.length) {
+      // All items cancelled => cancel whole order
+      if (cart.products.length === cancelledItems.length) {
         await Order.deleteOne({ _id: orderId });
         await Cart.deleteOne({ _id: cartId });
+
+        if (customerEmail) {
+          gmail.sendEmail(customerEmail, 'order-status', null, {
+            order: { _id: orderId },
+            status: 'Cancelled',
+            customerName,
+            customerEmail
+          }).catch(e => console.error('Cancel email error:', e));
+        }
 
         return res.status(200).json({
           success: true,
           orderCancelled: true,
-          message: `${
-            req.user.role === ROLES.Admin ? 'Order' : 'Your order'
-          } has been cancelled successfully`
+          message: `${req.user.role === ROLES.Admin ? 'Order' : 'Your order'} has been cancelled successfully`
         });
+      }
+
+      // Single item cancelled
+      if (customerEmail) {
+        gmail.sendEmail(customerEmail, 'order-status', null, {
+          order: { _id: orderId },
+          status: 'Cancelled',
+          customerName,
+          customerEmail
+        }).catch(e => console.error('Item cancel email error:', e));
       }
 
       return res.status(200).json({
         success: true,
         message: 'Item has been cancelled successfully!'
       });
+    }
+
+    // Shipped / Delivered — notify customer
+    if (
+      customerEmail &&
+      (status === CART_ITEM_STATUS.Shipped || status === CART_ITEM_STATUS.Delivered)
+    ) {
+      gmail.sendEmail(customerEmail, 'order-status', null, {
+        order: { _id: orderId },
+        status,
+        customerName,
+        customerEmail
+      }).catch(e => console.error(`${status} email error:`, e));
     }
 
     res.status(200).json({

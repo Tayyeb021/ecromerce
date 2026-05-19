@@ -39,6 +39,8 @@ const initialState = {
     description: '',
     quantity: 1,
     price: 1,
+    originalPrice: '',
+    isOnSale: false,
     image: {},
     images: [],
     isActive: true,

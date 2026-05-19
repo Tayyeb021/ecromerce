@@ -11,6 +11,7 @@ import { Switch, Route } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
 import actions from '../../actions';
+import { trackPageView } from '../../utils/pixel';
 
 // routes
 import Login from '../Login';
@@ -58,10 +59,21 @@ class Application extends React.PureComponent {
     }
 
     this.props.handleCart();
+    this.props.fetchSiteSettings();
 
     document.addEventListener('keydown', this.handleTabbing);
     document.addEventListener('mousedown', this.handleMouseDown);
     window.addEventListener('storage', this.handleStorage);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.location &&
+      prevProps.location &&
+      this.props.location.pathname !== prevProps.location.pathname
+    ) {
+      trackPageView();
+    }
   }
 
   handleStorage(e) {
@@ -139,7 +151,8 @@ class Application extends React.PureComponent {
 const mapStateToProps = state => {
   return {
     authenticated: state.authentication.authenticated,
-    products: state.product.storeProducts
+    products: state.product.storeProducts,
+    location: state.router.location
   };
 };
 

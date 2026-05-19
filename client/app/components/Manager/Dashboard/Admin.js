@@ -26,6 +26,8 @@ import Wishlist from '../../../containers/WishList';
 import AdminDashboard from '../../../containers/AdminDashboard';
 import Banner from '../../../containers/Banner';
 import Shipping from '../../../containers/Shipping';
+import SiteSetting from '../../../containers/SiteSetting';
+import Coupon from '../../../containers/Coupon';
 
 const Admin = props => {
   const { user } = props;
@@ -53,6 +55,8 @@ const Admin = props => {
               <Route path='/dashboard/wishlist' component={Wishlist} />
               <Route path='/dashboard/banner' component={Banner} />
               <Route path='/dashboard/shipping' component={Shipping} />
+              <Route path='/dashboard/setting' component={SiteSetting} />
+              <Route path='/dashboard/coupon' component={Coupon} />
               <Route path='*' component={Page404} />
             </Switch>
           </div>

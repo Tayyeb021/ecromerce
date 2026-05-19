@@ -103,6 +103,14 @@ const prepareTemplate = (type, host, data) => {
       message = template.orderConfirmationEmail(data);
       break;
 
+    case 'admin-new-order':
+      message = template.adminNewOrderEmail(data);
+      break;
+
+    case 'order-status':
+      message = template.orderStatusEmail(data.order, data.status, data.customerName, data.customerEmail);
+      break;
+
     default:
       message = { subject: '', text: '' };
   }

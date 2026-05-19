@@ -33,7 +33,12 @@ class List extends React.PureComponent {
           {isLoading ? (
             <LoadingIndicator inline />
           ) : products.length > 0 ? (
-            <ProductList products={products} />
+            <ProductList
+              products={products}
+              onDelete={this.props.deleteProduct}
+              onActivate={this.props.activateProduct}
+              history={history}
+            />
           ) : (
             <NotFound message='No products found.' />
           )}

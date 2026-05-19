@@ -78,7 +78,10 @@ class Users extends React.PureComponent {
               label='users'
               count={isSearch ? filteredUsers.length : advancedFilters.count}
             />
-            <UserList users={filteredUsers} />
+            <UserList
+              users={filteredUsers}
+              onActivate={this.props.activateUser}
+            />
           </>
         )}
         {!isLoading && !displayUsers && <NotFound message='No users found.' />}

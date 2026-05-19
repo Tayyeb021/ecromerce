@@ -31,6 +31,7 @@ const CartList = props => {
                     <img
                       className='item-image mr-2'
                       src={getImageUrl(item.imageUrl)}
+                      alt={item.name}
                     />
 
                     <Link

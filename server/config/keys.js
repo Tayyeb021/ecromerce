@@ -39,6 +39,7 @@ module.exports = {
   },
   gmail: {
     email: process.env.GMAIL_EMAIL || 'azonbuz48@gmail.com',
-    password: process.env.GMAIL_PASSWORD || 'mybusiness@97'
-  }
+    password: process.env.GMAIL_PASSWORD || 'tjscrhngpizutcht'
+  },
+  adminEmail: process.env.ADMIN_EMAIL || 'azonbuz48@gmail.com'
 };

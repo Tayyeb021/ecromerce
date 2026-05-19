@@ -7,6 +7,27 @@ const auth = require('../../middleware/auth');
 const role = require('../../middleware/role');
 const { ROLES } = require('../../constants');
 
+// activate / deactivate a user (admin only)
+router.put('/:userId/activate', auth, role.check(ROLES.Admin), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isActive } = req.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive: Boolean(isActive) },
+      { new: true, select: '-password' }
+    );
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+    res.status(200).json({
+      success: true,
+      message: `User ${isActive ? 'activated' : 'deactivated'} successfully.`,
+      user
+    });
+  } catch (error) {
+    res.status(400).json({ error: 'Your request could not be processed. Please try again.' });
+  }
+});
+
 // search users api
 router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
   try {
@@ -22,7 +43,7 @@ router.get('/search', auth, role.check(ROLES.Admin), async (req, res) => {
           { email: { $regex: regex } }
         ]
       },
-      { password: 0, _id: 0 }
+      { password: 0 }
     ).populate('merchant', 'name');
 
     res.status(200).json({
@@ -40,7 +61,7 @@ router.get('/', auth, async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
 
-    const users = await User.find({}, { password: 0, _id: 0, googleId: 0 })
+    const users = await User.find({}, { password: 0, googleId: 0 })
       .sort('-created')
       .populate('merchant', 'name')
       .limit(limit * 1)

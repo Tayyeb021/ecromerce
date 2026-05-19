@@ -195,6 +195,27 @@ export const updateOrderItemStatus = (itemId, status) => {
   };
 };
 
+export const updateOrderItemStatusFromList = (orderId, cartId, itemId, status) => {
+  return async dispatch => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/order/status/item/${itemId}`,
+        { orderId, cartId, status }
+      );
+
+      dispatch(success({
+        title: response.data.message || 'Status updated',
+        position: 'tr',
+        autoDismiss: 2
+      }));
+
+      dispatch(fetchOrders());
+    } catch (error) {
+      handleError(error, dispatch);
+    }
+  };
+};
+
 export const addOrder = (customerInfo = {}) => {
   return async (dispatch, getState) => {
     dispatch({ type: SET_PLACING_ORDER, payload: true });

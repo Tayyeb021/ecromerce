@@ -15,6 +15,7 @@ router.post('/add', auth, role.check(ROLES.Admin), (req, res) => {
   const description = req.body.description;
   const products = req.body.products;
   const isActive = req.body.isActive;
+  const icon = req.body.icon || '';
 
   if (!description || !name) {
     return res
@@ -26,7 +27,8 @@ router.post('/add', auth, role.check(ROLES.Admin), (req, res) => {
     name,
     description,
     products,
-    isActive
+    isActive,
+    icon
   });
 
   category.save((err, data) => {

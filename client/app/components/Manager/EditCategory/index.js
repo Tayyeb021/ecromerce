@@ -13,6 +13,7 @@ import Input from '../../Common/Input';
 import Button from '../../Common/Button';
 import SelectOption from '../../Common/SelectOption';
 import Switch from '../../Common/Switch';
+import IconPicker from '../../Common/IconPicker';
 
 const EditCategory = props => {
   const {
@@ -89,6 +90,12 @@ const EditCategory = props => {
               handleSelectChange={value => {
                 categoryChange('products', value);
               }}
+            />
+          </Col>
+          <Col xs='12' md='12' className='my-2'>
+            <IconPicker
+              value={category.icon || ''}
+              onChange={val => categoryChange('icon', val)}
             />
           </Col>
           <Col xs='12' md='12' className='mt-3 mb-2'>

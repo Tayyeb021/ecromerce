@@ -154,3 +154,65 @@
   }
 }
 /* end cart common styles */
+
+// Coupon input
+.coupon-input-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .coupon-input {
+    flex: 1;
+    font-size: 13px;
+    height: 36px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .coupon-apply-btn {
+    white-space: nowrap;
+    font-size: 12px;
+    height: 36px;
+    padding: 0 14px;
+  }
+}
+
+.coupon-applied {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 7px 12px;
+
+  .coupon-badge {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    color: #15803d;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .coupon-remove-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 14px;
+    line-height: 1;
+
+    &:hover { color: #ef4444; }
+  }
+}
+
+.coupon-form-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}

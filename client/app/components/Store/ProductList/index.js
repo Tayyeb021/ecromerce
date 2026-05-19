@@ -32,6 +32,19 @@ const ProductList = props => {
                 </div>
               </div>
 
+              {product.newArrivals && (
+                <span className='product-badge badge-new'>NEW</span>
+              )}
+              {(product.specialOffer || product.isOnSale) && (
+                <span className='product-badge badge-sale'>SALE</span>
+              )}
+
+              <div className='product-view-overlay'>
+                <Link to={`/product/${product.slug}`} className='product-view-btn'>
+                  View Product
+                </Link>
+              </div>
+
               <div className='item-link'>
                 <Link
                   to={`/product/${product.slug}`}
@@ -45,6 +58,7 @@ const ProductList = props => {
                           const imageUrl = getProductImageUrl(product);
                           return Array.isArray(imageUrl) ? imageUrl[0] : imageUrl;
                         })()}
+                        alt={product.name}
                       />
                     </div>
                   </div>
@@ -61,8 +75,20 @@ const ProductList = props => {
                   </div>
                   <div className='d-flex flex-row justify-content-between align-items-center px-4 mb-2 item-footer'>
                     <div className='price-wrapper'>
-                      <span className='price-currency'>PKR</span>
-                      <span className='price'>{product.price}</span>
+                      {product.isOnSale && product.originalPrice > product.price ? (
+                        <>
+                          <span className='price-original' style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: 12, marginRight: 4 }}>
+                            PKR {product.originalPrice}
+                          </span>
+                          <span className='price-currency' style={{ color: '#ef4444' }}>PKR</span>
+                          <span className='price' style={{ color: '#ef4444' }}>{product.price}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className='price-currency'>PKR</span>
+                          <span className='price'>{product.price}</span>
+                        </>
+                      )}
                     </div>
                     {product.totalReviews > 0 && (
                       <div className='rating-wrapper'>

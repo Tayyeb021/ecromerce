@@ -12,7 +12,9 @@ import {
   SET_CART_ID,
   CLEAR_CART,
   FETCH_SHIPPING_OPTIONS,
-  SET_SELECTED_SHIPPING_OPTION
+  SET_SELECTED_SHIPPING_OPTION,
+  APPLY_COUPON,
+  REMOVE_COUPON
 } from './constants';
 
 const initialState = {
@@ -20,7 +22,9 @@ const initialState = {
   cartTotal: 0,
   cartId: '',
   shippingOptions: [],
-  selectedShippingOption: null
+  selectedShippingOption: null,
+  coupon: null,
+  discount: 0
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -75,9 +79,15 @@ const cartReducer = (state = initialState, action) => {
         cartItems: [],
         cartTotal: 0,
         cartId: '',
-        selectedShippingOption: null
+        selectedShippingOption: null,
+        coupon: null,
+        discount: 0
       };
       return newState;
+    case APPLY_COUPON:
+      return { ...state, coupon: action.payload.coupon, discount: action.payload.discount };
+    case REMOVE_COUPON:
+      return { ...state, coupon: null, discount: 0 };
     case FETCH_SHIPPING_OPTIONS:
       return {
         ...state,

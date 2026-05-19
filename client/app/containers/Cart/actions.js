@@ -16,7 +16,9 @@ import {
   SET_CART_ID,
   CLEAR_CART,
   FETCH_SHIPPING_OPTIONS,
-  SET_SELECTED_SHIPPING_OPTION
+  SET_SELECTED_SHIPPING_OPTION,
+  APPLY_COUPON,
+  REMOVE_COUPON
 } from './constants';
 
 import {
@@ -281,3 +283,20 @@ export const setSelectedShippingOption = (shippingOption) => {
     payload: shippingOption
   };
 };
+
+// Apply coupon code
+export const applyCoupon = (code) => {
+  return async (dispatch, getState) => {
+    try {
+      const cartTotal = getState().cart.cartTotal;
+      const response = await axios.post(`${API_URL}/coupon/validate`, { code, cartTotal });
+      dispatch({ type: APPLY_COUPON, payload: { coupon: response.data.coupon, discount: response.data.discount } });
+      dispatch(success({ title: response.data.message, position: 'tr', autoDismiss: 3 }));
+    } catch (error) {
+      handleError(error, dispatch);
+    }
+  };
+};
+
+// Remove applied coupon
+export const removeCoupon = () => ({ type: REMOVE_COUPON });

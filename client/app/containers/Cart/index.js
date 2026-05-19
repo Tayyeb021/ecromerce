@@ -59,12 +59,16 @@ class Cart extends React.PureComponent {
         )}
         {cartItems.length > 0 && (
           <div className='cart-checkout'>
-            <CartSummary 
+            <CartSummary
               cartTotal={cartTotal}
               shippingOptions={this.props.shippingOptions}
               selectedShippingOption={this.props.selectedShippingOption}
               fetchShippingOptions={this.props.fetchShippingOptions}
               setSelectedShippingOption={this.props.setSelectedShippingOption}
+              coupon={this.props.coupon}
+              discount={this.props.discount}
+              onApplyCoupon={this.props.applyCoupon}
+              onRemoveCoupon={this.props.removeCoupon}
             />
             <Checkout
               handleShopping={handleShopping}
@@ -87,7 +91,9 @@ const mapStateToProps = state => {
     authenticated: state.authentication.authenticated,
     shippingOptions: state.cart.shippingOptions,
     selectedShippingOption: state.cart.selectedShippingOption,
-    isPlacingOrder: state.order.isPlacingOrder
+    isPlacingOrder: state.order.isPlacingOrder,
+    coupon: state.cart.coupon,
+    discount: state.cart.discount
   };
 };
 

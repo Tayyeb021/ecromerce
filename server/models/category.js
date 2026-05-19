@@ -33,6 +33,11 @@ const CategorySchema = new Schema({
     type: String,
     trim: true
   },
+  icon: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   isActive: {
     type: Boolean,
     default: true

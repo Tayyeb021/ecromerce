@@ -5,100 +5,71 @@
  */
 
 import React, { useEffect, useState } from 'react';
-
 import { Container, Row, Col } from 'reactstrap';
 
 const CartSummary = props => {
-  const { 
-    cartTotal, 
-    shippingOptions, 
+  const {
+    cartTotal,
+    shippingOptions,
     selectedShippingOption,
     fetchShippingOptions,
-    setSelectedShippingOption
+    setSelectedShippingOption,
+    coupon,
+    discount = 0,
+    onApplyCoupon,
+    onRemoveCoupon
   } = props;
 
+  const [couponInput, setCouponInput] = useState('');
+
   useEffect(() => {
-    // Always try to fetch shipping options when component mounts
-    if (shippingOptions.length === 0) {
-      console.log('Fetching shipping options...');
-      fetchShippingOptions();
-    } else {
-      console.log('Shipping options already loaded:', shippingOptions.length);
-    }
+    if (shippingOptions.length === 0) fetchShippingOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Log when shipping options change
-  useEffect(() => {
-    if (shippingOptions.length > 0) {
-      console.log('Shipping options loaded:', shippingOptions);
-    }
-  }, [shippingOptions]);
+  const DEFAULT_SHIPPING_COST = 200;
 
-  // Log when selected option changes
-  useEffect(() => {
-    if (selectedShippingOption) {
-      console.log('Selected shipping option:', selectedShippingOption);
-    }
-  }, [selectedShippingOption]);
-
-  // Calculate shipping cost
   const calculateShippingCost = () => {
-    // Default shipping cost if no option selected
-    const DEFAULT_SHIPPING_COST = 200;
-
-    if (!selectedShippingOption) {
-      // Always use default shipping cost of 200 if no option is selected
-      return DEFAULT_SHIPPING_COST;
-    }
-
-    const option = selectedShippingOption;
-    
-    // Check if free shipping threshold is met
-    if (option.freeShippingThreshold && cartTotal >= option.freeShippingThreshold) {
-      return 0;
-    }
-
-    return option.cost || DEFAULT_SHIPPING_COST;
+    if (!selectedShippingOption) return DEFAULT_SHIPPING_COST;
+    const opt = selectedShippingOption;
+    if (opt.freeShippingThreshold && cartTotal >= opt.freeShippingThreshold) return 0;
+    return opt.cost || DEFAULT_SHIPPING_COST;
   };
 
   const shippingCost = calculateShippingCost();
-  const finalTotal = cartTotal + shippingCost;
+  const finalTotal = Math.max(0, cartTotal + shippingCost - discount);
 
-  const handleShippingChange = (e) => {
-    const selectedId = e.target.value;
-    const option = shippingOptions.find(opt => opt._id === selectedId);
-    if (option) {
-      setSelectedShippingOption(option);
-    }
+  const handleShippingChange = e => {
+    const opt = shippingOptions.find(o => o._id === e.target.value);
+    if (opt) setSelectedShippingOption(opt);
   };
 
-  // Show shipping options dropdown if available, otherwise show default
-  const showShippingSelector = shippingOptions.length > 0;
-  const DEFAULT_SHIPPING_COST = 200;
+  const handleApplyCoupon = () => {
+    if (couponInput.trim() && onApplyCoupon) onApplyCoupon(couponInput.trim());
+  };
 
   return (
     <div className='cart-summary'>
       <Container>
-        {showShippingSelector ? (
+        {shippingOptions.length > 0 ? (
           <Row className='mb-2 summary-item'>
             <Col xs='12'>
-              <label className='summary-label' style={{ display: 'block', marginBottom: '8px' }}>
+              <label className='summary-label' style={{ display: 'block', marginBottom: 6 }}>
                 Shipping Method
               </label>
               <select
                 className='form-control'
                 value={selectedShippingOption?._id || ''}
                 onChange={handleShippingChange}
-                style={{ fontSize: '14px' }}
+                style={{ fontSize: 14 }}
               >
-                {shippingOptions.map((option) => (
-                  <option key={option._id} value={option._id}>
-                    {option.name}
-                    {option.deliveryTime && ` - ${option.deliveryTime}`}
-                    {option.freeShippingThreshold && cartTotal >= option.freeShippingThreshold
+                {shippingOptions.map(opt => (
+                  <option key={opt._id} value={opt._id}>
+                    {opt.name}
+                    {opt.deliveryTime ? ` - ${opt.deliveryTime}` : ''}
+                    {opt.freeShippingThreshold && cartTotal >= opt.freeShippingThreshold
                       ? ' (Free)'
-                      : ` - PKR ${option.cost.toFixed(2)}`}
+                      : ` - PKR ${opt.cost.toFixed(2)}`}
                   </option>
                 ))}
               </select>
@@ -107,23 +78,19 @@ const CartSummary = props => {
         ) : (
           <Row className='mb-2 summary-item'>
             <Col xs='12'>
-              <p className='summary-label' style={{ fontSize: '12px', color: '#666' }}>
+              <p className='summary-label' style={{ fontSize: 12, color: '#666' }}>
                 Standard Shipping (PKR {DEFAULT_SHIPPING_COST})
               </p>
             </Col>
           </Row>
         )}
+
         <Row className='mb-2 summary-item'>
           <Col xs='9'>
             <p className='summary-label'>Shipping</p>
-            {selectedShippingOption && selectedShippingOption.deliveryTime && (
-              <small className='d-block text-muted' style={{ fontSize: '11px' }}>
+            {selectedShippingOption?.deliveryTime && (
+              <small className='d-block text-muted' style={{ fontSize: 11 }}>
                 {selectedShippingOption.deliveryTime}
-              </small>
-            )}
-            {!selectedShippingOption && !showShippingSelector && (
-              <small className='d-block text-muted' style={{ fontSize: '11px' }}>
-                Standard delivery
               </small>
             )}
           </Col>
@@ -133,23 +100,75 @@ const CartSummary = props => {
             </p>
           </Col>
         </Row>
-        {selectedShippingOption && 
-         selectedShippingOption.freeShippingThreshold && 
-         cartTotal < selectedShippingOption.freeShippingThreshold && (
-          <Row className='mb-2 summary-item'>
+
+        {selectedShippingOption?.freeShippingThreshold &&
+          cartTotal < selectedShippingOption.freeShippingThreshold && (
+          <Row className='mb-1'>
             <Col xs='12'>
-              <p className='summary-note' style={{ fontSize: '12px', color: '#666' }}>
+              <p style={{ fontSize: 12, color: '#666', margin: 0 }}>
                 Add PKR {(selectedShippingOption.freeShippingThreshold - cartTotal).toFixed(2)} more for free shipping!
               </p>
             </Col>
           </Row>
         )}
+
+        {/* Coupon */}
+        <Row className='mt-2 mb-2'>
+          <Col xs='12'>
+            {coupon ? (
+              <div className='coupon-applied'>
+                <span className='coupon-badge'>
+                  <i className='fa fa-tag mr-1' />
+                  {coupon.code}
+                  {coupon.type === 'percentage'
+                    ? ` (${coupon.value}% off)`
+                    : ` (PKR ${coupon.value} off)`}
+                </span>
+                <button className='coupon-remove-btn' onClick={onRemoveCoupon}>
+                  <i className='fa fa-times' />
+                </button>
+              </div>
+            ) : (
+              <div className='coupon-input-wrap'>
+                <input
+                  type='text'
+                  className='form-control coupon-input'
+                  placeholder='Coupon code'
+                  value={couponInput}
+                  onChange={e => setCouponInput(e.target.value.toUpperCase())}
+                  onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
+                />
+                <button
+                  className='btn btn-sm btn-outline-primary coupon-apply-btn'
+                  onClick={handleApplyCoupon}
+                  disabled={!couponInput.trim()}
+                >
+                  Apply
+                </button>
+              </div>
+            )}
+          </Col>
+        </Row>
+
+        {discount > 0 && (
+          <Row className='mb-2 summary-item'>
+            <Col xs='9'>
+              <p className='summary-label' style={{ color: '#10b981' }}>Discount</p>
+            </Col>
+            <Col xs='3' className='text-right'>
+              <p className='summary-value' style={{ color: '#10b981' }}>
+                - PKR {discount.toFixed(2)}
+              </p>
+            </Col>
+          </Row>
+        )}
+
         <Row className='mb-2 summary-item'>
           <Col xs='9'>
-            <p className='summary-label'>Total</p>
+            <p className='summary-label'><strong>Total</strong></p>
           </Col>
           <Col xs='3' className='text-right'>
-            <p className='summary-value'>PKR {finalTotal.toFixed(2)}</p>
+            <p className='summary-value'><strong>PKR {finalTotal.toFixed(2)}</strong></p>
           </Col>
         </Row>
       </Container>

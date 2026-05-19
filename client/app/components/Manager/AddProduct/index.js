@@ -110,6 +110,26 @@ const AddProduct = props => {
               }}
             />
           </Col>
+          <Col xs='12' lg='6'>
+            <Input
+              type={'number'}
+              label={'Original Price (PKR)'}
+              name={'originalPrice'}
+              min={0}
+              placeholder={'Crossed-out price (optional)'}
+              value={productFormData.originalPrice}
+              onInputChange={(name, value) => productChange(name, value)}
+            />
+          </Col>
+          <Col xs='12' lg='6' className='d-flex align-items-end mb-3'>
+            <Switch
+              id={'on-sale-add'}
+              name={'isOnSale'}
+              label={'Mark as On Sale'}
+              checked={productFormData.isOnSale}
+              toggleCheckboxChange={value => productChange('isOnSale', value)}
+            />
+          </Col>
           <Col xs='12' md='12'>
             <SelectOption
               error={formErrors['taxable']}

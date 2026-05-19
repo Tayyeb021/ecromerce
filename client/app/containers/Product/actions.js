@@ -279,6 +279,8 @@ export const addProduct = () => {
         name: product.name,
         description: product.description,
         price: product.price,
+        originalPrice: product.originalPrice || '',
+        isOnSale: product.isOnSale || false,
         quantity: product.quantity,
         isActive: product.isActive,
         taxable: product.taxable.value,
@@ -390,6 +392,8 @@ export const updateProduct = () => {
         description: product.description,
         quantity: product.quantity,
         price: product.price,
+        originalPrice: product.originalPrice || null,
+        isOnSale: product.isOnSale || false,
         taxable: product.taxable,
         brand: brand != 0 ? brand : null
       };

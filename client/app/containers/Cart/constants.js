@@ -12,3 +12,5 @@ export const SET_CART_ID = 'src/Cart/SET_CART_ID';
 export const CLEAR_CART = 'src/Cart/CLEAR_CART';
 export const FETCH_SHIPPING_OPTIONS = 'src/Cart/FETCH_SHIPPING_OPTIONS';
 export const SET_SELECTED_SHIPPING_OPTION = 'src/Cart/SET_SELECTED_SHIPPING_OPTION';
+export const APPLY_COUPON = 'src/Cart/APPLY_COUPON';
+export const REMOVE_COUPON = 'src/Cart/REMOVE_COUPON';

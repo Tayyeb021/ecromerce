@@ -36,6 +36,7 @@ import wishListReducer from './containers/WishList/reducer';
 import adminDashboardReducer from './containers/AdminDashboard/reducer';
 import bannerReducer from './containers/Banner/reducer';
 import shippingReducer from './containers/Shipping/reducer';
+import siteSettingReducer from './containers/SiteSetting/reducer';
 
 const createReducer = history =>
   combineReducers({
@@ -67,7 +68,8 @@ const createReducer = history =>
     wishlist: wishListReducer,
     adminDashboard: adminDashboardReducer,
     banner: bannerReducer,
-    shipping: shippingReducer
+    shipping: shippingReducer,
+    siteSetting: siteSettingReducer
   });
 
 export default createReducer;

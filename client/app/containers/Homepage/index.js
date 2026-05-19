@@ -18,7 +18,19 @@ import LoadingIndicator from '../../components/Common/LoadingIndicator';
 import NotFound from '../../components/Common/NotFound';
 import Pagination from '../../components/Common/Pagination';
 import RecentlyViewed from '../../components/Store/RecentlyViewed';
+import Newsletter from '../Newsletter';
 import { SET_ADVANCED_FILTERS } from '../Product/constants';
+
+const CATEGORY_GRADIENTS = [
+  'linear-gradient(135deg,#667eea,#764ba2)',
+  'linear-gradient(135deg,#f093fb,#f5576c)',
+  'linear-gradient(135deg,#4facfe,#00f2fe)',
+  'linear-gradient(135deg,#43e97b,#38f9d7)',
+  'linear-gradient(135deg,#fa709a,#fee140)',
+  'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+  'linear-gradient(135deg,#fccb90,#d57eeb)',
+  'linear-gradient(135deg,#a1c4fd,#c2e9fb)',
+];
 
 class Homepage extends React.PureComponent {
   componentDidMount() {
@@ -80,6 +92,29 @@ class Homepage extends React.PureComponent {
           <Container>
             <Row className='hero-row'>
               <Col xs='12' lg='8' className='hero-main'>
+                <div className='hero-main-inner'>
+                <div className='hero-overlay'>
+                  <h1 className='hero-title'>Shop Everything You Love</h1>
+                  <p className='hero-subtitle'>Fresh arrivals &amp; unbeatable prices — delivered to your door.</p>
+                  <div className='hero-cta'>
+                    <Link to='/shop' className='btn btn-primary btn-lg mr-3'>Shop Now</Link>
+                    <span
+                      className='btn btn-outline-light btn-lg'
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        dispatch({
+                          type: SET_ADVANCED_FILTERS,
+                          payload: { limit: 12, currentPage: 1, name: 'all', category: 'all', brand: 'all', min: 1, max: 2500, rating: 0, order: 0, specialOffer: false, newArrivals: true }
+                        });
+                        setTimeout(() => {
+                          filterProducts('newArrivals', true);
+                          const s = document.querySelector('.homepage-products-section');
+                          if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 50);
+                      }}
+                    >New Arrivals</span>
+                  </div>
+                </div>
                 <div className='hero-carousel-wrapper'>
                   {displayBanners.length > 0 ? (
                     <CarouselSlider
@@ -109,6 +144,7 @@ class Homepage extends React.PureComponent {
                     </div>
                   )}
                 </div>
+                </div>{/* hero-main-inner */}
               </Col>
               <Col xs='12' lg='4' className='hero-sidebar'>
                 <div className='hero-sidebar-content'>
@@ -188,6 +224,25 @@ class Homepage extends React.PureComponent {
           </Container>
         </section>
 
+        {/* Stats Trust Bar */}
+        <section className='stats-bar'>
+          <Container>
+            <Row className='stats-row'>
+              {[
+                { value: '10,000+', label: 'Orders Delivered' },
+                { value: '500+',    label: 'Products Listed'  },
+                { value: '98%',     label: 'Happy Customers'  },
+                { value: '5 ★',    label: 'Average Rating'   },
+              ].map((stat, i) => (
+                <Col key={i} xs='6' md='3' className='stat-item'>
+                  <span className='stat-value'>{stat.value}</span>
+                  <span className='stat-label'>{stat.label}</span>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </section>
+
         {/* Features Bar */}
         <section className='features-bar'>
           <Container>
@@ -232,6 +287,30 @@ class Homepage extends React.PureComponent {
           </Container>
         </section>
 
+        {/* Flash Deals Banner */}
+        <div className='flash-deals-banner'>
+          <div className='flash-banner-inner'>
+            <span className='flash-badge'>LIMITED TIME</span>
+            <span className='flash-text'>SALE &mdash; Up to <strong>50% Off</strong> on selected items</span>
+            <span
+              className='flash-cta'
+              onClick={() => {
+                dispatch({
+                  type: SET_ADVANCED_FILTERS,
+                  payload: { limit: 12, currentPage: 1, name: 'all', category: 'all', brand: 'all', min: 1, max: 2500, rating: 0, order: 0, specialOffer: true, newArrivals: false }
+                });
+                setTimeout(() => {
+                  filterProducts('specialOffer', true);
+                  const s = document.querySelector('.homepage-products-section');
+                  if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+              }}
+            >
+              Shop Sale <i className='fa fa-arrow-right' />
+            </span>
+          </div>
+        </div>
+
         {/* Categories Section */}
         {displayCategories.length > 0 && (
           <section className='homepage-categories-section'>
@@ -251,8 +330,11 @@ class Homepage extends React.PureComponent {
                         className='category-card'
                       >
                         <div className='category-icon-wrapper'>
-                          <div className='category-icon'>
-                            <i className='fa fa-folder-open' />
+                          <div
+                            className='category-avatar'
+                            style={{ background: CATEGORY_GRADIENTS[index % CATEGORY_GRADIENTS.length] }}
+                          >
+                            {(category.name || '?').charAt(0).toUpperCase()}
                           </div>
                         </div>
                         <div className='category-content'>
@@ -333,12 +415,28 @@ class Homepage extends React.PureComponent {
                     />
                   </div>
                 )}
+                <div className='view-all-wrapper'>
+                  <Link to='/shop' className='btn view-all-btn'>
+                    View All Products <i className='fa fa-arrow-right' />
+                  </Link>
+                </div>
               </>
             ) : (
               <div className='products-empty'>
                 <NotFound message='No products found. Please check your connection or try refreshing the page.' />
               </div>
             )}
+          </Container>
+        </section>
+
+        {/* Newsletter CTA Section */}
+        <section className='newsletter-cta'>
+          <Container>
+            <div className='newsletter-content'>
+              <h2>Get Exclusive Deals in Your Inbox</h2>
+              <p>Subscribe and be the first to know about new arrivals and special offers.</p>
+              <Newsletter />
+            </div>
           </Container>
         </section>
 

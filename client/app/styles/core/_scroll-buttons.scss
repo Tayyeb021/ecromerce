@@ -1,4 +1,4 @@
-// Scroll Buttons Styles
+// Scroll Buttons — fixed stack on right side
 
 .scroll-buttons {
   position: fixed;
@@ -7,266 +7,87 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  align-items: flex-end;
+  gap: 10px;
+  align-items: center;
+
   @include media-breakpoint-up(md) {
-    right: 30px;
+    right: 28px;
   }
   @include media-breakpoint-down(sm) {
-    right: 15px;
+    right: 14px;
     bottom: 20px;
-    gap: 12px;
+    gap: 8px;
   }
 
   .scroll-btn {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-    border: 3px solid rgba(255, 255, 255, 0.4);
+    border: none;
     color: #ffffff;
-    font-size: 22px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 
-      0 6px 20px rgba(255, 107, 53, 0.4),
-      0 0 0 0 rgba(255, 107, 53, 0.7);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: visible;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+
     @include media-breakpoint-down(sm) {
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      border-width: 2px;
-    }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.25);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s ease, height 0.6s ease;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      padding: 2px;
-      background: linear-gradient(135deg, #FF6B35, #FF8C42, #E55A2B);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      width: 42px;
+      height: 42px;
+      font-size: 16px;
     }
 
     &:hover {
-      transform: translateY(-4px) scale(1.08);
-      box-shadow: 
-        0 8px 25px rgba(255, 107, 53, 0.6),
-        0 0 0 8px rgba(255, 107, 53, 0.1);
-      background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
-      border-color: rgba(255, 255, 255, 0.6);
-
-      &::before {
-        width: 100%;
-        height: 100%;
-      }
-
-      &::after {
-        opacity: 1;
-      }
-
-      .fa,
-      .whatsapp-icon {
-        transform: scale(1.25);
-      }
-
-      .whatsapp-number {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      transform: translateY(-3px);
     }
 
     &:active {
-      transform: translateY(-2px) scale(1.05);
-    }
-
-    .fa,
-    .whatsapp-icon {
-      position: relative;
-      z-index: 2;
-      transition: transform 0.3s ease;
-      flex-shrink: 0;
+      transform: translateY(0);
     }
 
     &.scroll-btn-up {
-      animation: bounceUp 2.5s infinite;
+      background: linear-gradient(135deg, #FF6B35, #FF8C42);
+      box-shadow: 0 4px 14px rgba(255, 107, 53, 0.45);
     }
 
     &.scroll-btn-down {
-      animation: bounceDown 2.5s infinite;
+      background: linear-gradient(135deg, #FF6B35, #FF8C42);
+      box-shadow: 0 4px 14px rgba(255, 107, 53, 0.45);
     }
 
     &.scroll-btn-whatsapp {
-      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-      box-shadow: 
-        0 6px 20px rgba(37, 211, 102, 0.4),
-        0 0 0 0 rgba(37, 211, 102, 0.7);
-      width: 50px;
-      min-width: 50px;
-      height: 50px;
-      padding: 0 12px;
-      border-radius: 50%;
-      gap: 8px;
-      @include media-breakpoint-down(sm) {
-        width: 50px;
-        min-width: 50px;
-        height: 50px;
-        padding: 0 10px;
-        gap: 6px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+      animation: waPulse 2.5s infinite;
+
+      svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+        flex-shrink: 0;
+
+        @include media-breakpoint-down(sm) {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      // Hide the number span — icon only
+      .whatsapp-number {
+        display: none;
       }
 
       &:hover {
-        background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
-        box-shadow: 
-          0 8px 25px rgba(37, 211, 102, 0.6),
-          0 0 0 8px rgba(37, 211, 102, 0.1);
-        width: auto;
-        min-width: 50px;
-        height: 50px;
-        border-radius: 30px;
-        @include media-breakpoint-down(sm) {
-          min-width: 180px;
-        }
-      }
-
-      &::after {
-        background: linear-gradient(135deg, #25D366, #128C7E, #075E54);
-      }
-
-      .whatsapp-number {
-        position: relative;
-        z-index: 2;
-        font-size: 14px;
-        font-weight: 600;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateX(-10px);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        letter-spacing: 0.3px;
-        @include media-breakpoint-down(sm) {
-          font-size: 13px;
-        }
-      }
-
-      .fa {
-        font-size: 24px;
-        @include media-breakpoint-down(sm) {
-          font-size: 22px;
-        }
-      }
-
-      .whatsapp-icon {
-        width: 26px;
-        height: 26px;
-        color: #ffffff;
-        @include media-breakpoint-down(sm) {
-          width: 22px;
-          height: 22px;
-        }
+        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
       }
     }
   }
 }
 
-@keyframes bounceUp {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes bounceDown {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(6px);
-  }
-}
-
-// Pulse animation for WhatsApp button
-@keyframes pulse {
-  0% {
-    box-shadow: 
-      0 6px 20px rgba(37, 211, 102, 0.4),
-      0 0 0 0 rgba(37, 211, 102, 0.7);
-  }
-  50% {
-    box-shadow: 
-      0 6px 20px rgba(37, 211, 102, 0.4),
-      0 0 0 10px rgba(37, 211, 102, 0);
-  }
-  100% {
-    box-shadow: 
-      0 6px 20px rgba(37, 211, 102, 0.4),
-      0 0 0 0 rgba(37, 211, 102, 0);
-  }
-}
-
-.scroll-btn-whatsapp {
-  animation: pulse 2s infinite;
-}
-
-// Hide scroll buttons on very small screens if needed
-@include media-breakpoint-down(xs) {
-  .scroll-buttons {
-    .scroll-btn {
-      width: 45px;
-      height: 45px;
-      font-size: 18px;
-    }
-  }
-}
-
-@keyframes bounceUp {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes bounceDown {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-// Hide scroll buttons on very small screens if needed
-@include media-breakpoint-down(xs) {
-  .scroll-buttons {
-    .scroll-btn {
-      width: 40px;
-      height: 40px;
-      font-size: 16px;
-    }
-  }
+@keyframes waPulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45); }
+  50%       { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.75), 0 0 0 6px rgba(37, 211, 102, 0.12); }
 }

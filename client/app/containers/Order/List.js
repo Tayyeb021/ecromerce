@@ -98,7 +98,11 @@ class List extends React.PureComponent {
                 label='orders'
                 count={isSearch ? filteredOrders.length : advancedFilters.count}
               />
-              <OrderList orders={filteredOrders} />
+              <OrderList
+                orders={filteredOrders}
+                user={user}
+                onStatusChange={this.props.updateOrderItemStatusFromList}
+              />
             </>
           )}
           {!isLoading && !displayOrders && (

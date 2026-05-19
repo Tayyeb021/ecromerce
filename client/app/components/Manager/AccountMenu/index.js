@@ -21,12 +21,13 @@ const AccountMenu = props => {
     return 'Account';
   })();
 
+  const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || user?.email || roleLabel;
+  const avatarLetter = (user?.firstName || user?.email || roleLabel).charAt(0).toUpperCase();
+
   const getAllowedProvider = link => {
     if (!link.provider) return true;
-
-    const userProvider = user.provider ?? '';
+    const userProvider = user?.provider ?? '';
     if (!userProvider) return true;
-
     return link.provider.includes(userProvider);
   };
 
@@ -36,25 +37,38 @@ const AccountMenu = props => {
         text={`${roleLabel} Menu`}
         className={`${isMenuOpen ? 'menu-panel' : 'menu-panel collapse'}`}
         ariaExpanded={isMenuOpen ? 'true' : 'false'}
-        // ariaLabel={isMenuOpen ? 'dashboard menu expanded' : 'dashboard menu collapse'}
         onClick={toggleMenu}
       />
-      <h3 className='panel-title'>{roleLabel}</h3>
+
+      {/* User profile header */}
+      <div className='sidebar-profile'>
+        <div className='sidebar-avatar'>{avatarLetter}</div>
+        <div className='sidebar-user-info'>
+          <span className='sidebar-user-name'>{displayName}</span>
+          <span className='sidebar-user-role'>{roleLabel}</span>
+        </div>
+      </div>
+
       <Navbar color='light' light expand='md'>
         <Collapse isOpen={isMenuOpen} navbar>
           <ul className='panel-links'>
             {links.map((link, index) => {
+              if (link.divider) {
+                return (
+                  <li key={`divider-${index}`} className='panel-links__section'>
+                    <span className='panel-links__section-title'>{link.sectionTitle}</span>
+                  </li>
+                );
+              }
+
               const PREFIX = link.prefix ? link.prefix : '';
-              const isProviderAllowed = getAllowedProvider(link);
-              if (!isProviderAllowed) return;
+              if (!getAllowedProvider(link)) return null;
+
               return (
                 <li key={index}>
-                  <NavLink
-                    to={PREFIX + link.to}
-                    activeClassName='active-link'
-                    exact
-                  >
-                    {link.name}
+                  <NavLink to={PREFIX + link.to} activeClassName='active-link' exact>
+                    {link.icon && <i className={`fa ${link.icon} nav-icon`} />}
+                    <span>{link.name}</span>
                   </NavLink>
                 </li>
               );

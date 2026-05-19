@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import actions from '../../actions';
+import { trackPurchase } from '../../utils/pixel';
 
 import NotFound from '../../components/Common/NotFound';
 import LoadingIndicator from '../../components/Common/LoadingIndicator';
@@ -30,6 +31,15 @@ class OrderSuccess extends React.PureComponent {
     if (this.props.authenticated && this.props.match.params.id !== prevProps.match.params.id) {
       const id = this.props.match.params.id;
       if (id) this.props.fetchOrder(id);
+    }
+    if (
+      this.props.order &&
+      this.props.order._id &&
+      (!prevProps.order || prevProps.order._id !== this.props.order._id) &&
+      !this._purchaseTracked
+    ) {
+      this._purchaseTracked = true;
+      trackPurchase(this.props.order);
     }
   }
 

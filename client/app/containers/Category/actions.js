@@ -130,7 +130,8 @@ export const addCategory = () => {
       const newCategory = {
         name: category.name,
         description: category.description,
-        products: unformatSelectOptions(category.products)
+        products: unformatSelectOptions(category.products),
+        icon: category.icon || ''
       };
 
       const { isValid, errors } = allFieldsValidation(newCategory, rules, {
@@ -183,7 +184,8 @@ export const updateCategory = () => {
         name: category.name,
         slug: category.slug,
         description: category.description,
-        products: category.products && unformatSelectOptions(category.products)
+        products: category.products && unformatSelectOptions(category.products),
+        icon: category.icon || ''
       };
 
       const { isValid, errors } = allFieldsValidation(newCategory, rules, {

@@ -15,6 +15,7 @@ import {
 
 import handleError from '../../utils/error';
 import { API_URL } from '../../constants';
+import { success } from 'react-notification-system-redux';
 
 export const setUserLoading = value => {
   return {
@@ -48,6 +49,22 @@ export const fetchUsers = page => {
       handleError(error, dispatch);
     } finally {
       dispatch(setUserLoading(false));
+    }
+  };
+};
+
+export const activateUser = (userId, isActive) => {
+  return async dispatch => {
+    try {
+      const response = await axios.put(`${API_URL}/user/${userId}/activate`, { isActive });
+      dispatch(success({
+        title: response.data.message || 'User updated',
+        position: 'tr',
+        autoDismiss: 2
+      }));
+      dispatch(fetchUsers());
+    } catch (error) {
+      handleError(error, dispatch);
     }
   };
 };

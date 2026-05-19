@@ -13,14 +13,16 @@ router.post('/add', auth, async (req, res) => {
 
     const review = new Review({
       ...req.body,
-      user: user._id
+      user: user._id,
+      status: REVIEW_STATUS.Approved,
+      isActive: true
     });
 
     const reviewDoc = await review.save();
 
     res.status(200).json({
       success: true,
-      message: `Your review has been added successfully and will appear when approved!`,
+      message: `Your review has been added successfully!`,
       review: reviewDoc
     });
   } catch (error) {

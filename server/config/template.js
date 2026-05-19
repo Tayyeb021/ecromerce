@@ -97,6 +97,103 @@ exports.merchantDeactivateAccount = () => {
   return message;
 };
 
+exports.adminNewOrderEmail = order => {
+  const orderId = order._id || 'N/A';
+  const orderDate = order.created ? new Date(order.created).toLocaleString() : new Date().toLocaleString();
+  const total = order.total || 0;
+  const customerEmail = order.user?.email || order.guestEmail || 'Guest';
+  const customerName = [order.user?.firstName || order.guestFirstName, order.user?.lastName || order.guestLastName].filter(Boolean).join(' ') || 'Guest';
+
+  const productRows = (order.products || []).map((item, i) => {
+    const name = item.product?.name || item.name || 'Product';
+    const qty = item.quantity || 1;
+    const price = item.purchasePrice || item.price || 0;
+    return `<tr style="background:${i % 2 === 0 ? '#f8fafc' : '#fff'}">
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0">${name}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center">${qty}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:right">PKR ${(price * qty).toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;color:#333;margin:0;padding:0">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:#0f172a;padding:20px;text-align:center">
+      <h2 style="color:#fff;margin:0">🛒 New Order Received</h2>
+    </div>
+    <div style="padding:24px;background:#f1f5f9">
+      <p style="margin:0 0 16px">A new order has been placed on <strong>A-Z On-Buz</strong>.</p>
+      <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;margin-bottom:16px">
+        <tr><td style="padding:10px 12px;font-weight:bold;color:#64748b;width:140px">Order ID</td><td style="padding:10px 12px">#${orderId}</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:10px 12px;font-weight:bold;color:#64748b">Date</td><td style="padding:10px 12px">${orderDate}</td></tr>
+        <tr><td style="padding:10px 12px;font-weight:bold;color:#64748b">Customer</td><td style="padding:10px 12px">${customerName} (${customerEmail})</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:10px 12px;font-weight:bold;color:#64748b">Total</td><td style="padding:10px 12px;color:#2962ff;font-weight:bold">PKR ${Number(total).toFixed(2)}</td></tr>
+      </table>
+      ${productRows ? `<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden">
+        <thead><tr style="background:#0f172a;color:#fff"><th style="padding:10px 12px;text-align:left">Product</th><th style="padding:10px 12px;text-align:center">Qty</th><th style="padding:10px 12px;text-align:right">Total</th></tr></thead>
+        <tbody>${productRows}</tbody>
+      </table>` : ''}
+    </div>
+    <div style="padding:16px;text-align:center;color:#94a3b8;font-size:12px">A-Z On-Buz Admin Notification</div>
+  </div></body></html>`;
+
+  return {
+    subject: `New Order #${orderId} — PKR ${Number(total).toFixed(2)}`,
+    text: `New order received!\nOrder ID: ${orderId}\nCustomer: ${customerName} (${customerEmail})\nTotal: PKR ${Number(total).toFixed(2)}\nDate: ${orderDate}`,
+    html
+  };
+};
+
+exports.orderStatusEmail = (order, status, customerName, customerEmail) => {
+  const orderId = order._id || 'N/A';
+  const statusMessages = {
+    Shipped: {
+      subject: `Your Order #${orderId} Has Been Shipped! 🚚`,
+      headline: 'Your Order is on the Way!',
+      body: 'Great news! Your order has been shipped and is on its way to you.',
+      color: '#0ea5e9'
+    },
+    Delivered: {
+      subject: `Your Order #${orderId} Has Been Delivered! ✅`,
+      headline: 'Your Order Has Been Delivered!',
+      body: 'Your order has been delivered. We hope you love your purchase!',
+      color: '#10b981'
+    },
+    Cancelled: {
+      subject: `Your Order #${orderId} Has Been Cancelled`,
+      headline: 'Order Cancelled',
+      body: 'Your order item has been cancelled. If you have any questions, please contact us.',
+      color: '#ef4444'
+    }
+  };
+
+  const msg = statusMessages[status] || {
+    subject: `Order #${orderId} Update`,
+    headline: `Order Status: ${status}`,
+    body: `Your order status has been updated to: ${status}`,
+    color: '#2962ff'
+  };
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;color:#333;margin:0;padding:0">
+  <div style="max-width:600px;margin:0 auto">
+    <div style="background:${msg.color};padding:20px;text-align:center">
+      <h2 style="color:#fff;margin:0">${msg.headline}</h2>
+    </div>
+    <div style="padding:24px;background:#f1f5f9">
+      <p>Hi <strong>${customerName || 'Customer'}</strong>,</p>
+      <p>${msg.body}</p>
+      <div style="background:#fff;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid ${msg.color}">
+        <p style="margin:0"><strong>Order ID:</strong> #${orderId}</p>
+        <p style="margin:8px 0 0"><strong>Status:</strong> <span style="color:${msg.color};font-weight:bold">${status}</span></p>
+      </div>
+      <p>If you have any questions, contact us at <a href="mailto:azonbuz48@gmail.com" style="color:#2962ff">azonbuz48@gmail.com</a>.</p>
+      <p>Thank you for shopping with A-Z On-Buz!</p>
+    </div>
+    <div style="padding:16px;text-align:center;color:#94a3b8;font-size:12px">A-Z On-Buz | +92 313 0417345</div>
+  </div></body></html>`;
+
+  return { subject: msg.subject, text: `Hi ${customerName},\n${msg.body}\nOrder ID: #${orderId}\nStatus: ${status}\n\nThank you for shopping with A-Z On-Buz!`, html };
+};
+
 exports.orderConfirmationEmail = order => {
   const userName = order.user?.profile?.firstName || order.user?.firstName || 'Customer';
   const orderId = order._id || order._id?.toString() || 'N/A';

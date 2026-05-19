@@ -16,6 +16,8 @@ const wishlistRoutes = require('./wishlist');
 const bannerRoutes = require('./banner');
 const shippingRoutes = require('./shipping');
 const marketIntelligenceRoutes = require('./marketIntelligence');
+const settingRoutes = require('./setting');
+const couponRoutes = require('./coupon');
 
 // auth routes
 router.use('/auth', authRoutes);
@@ -64,5 +66,11 @@ router.use('/shipping', shippingRoutes);
 
 // Market Intelligence routes
 router.use('/market-intelligence', marketIntelligenceRoutes);
+
+// Site settings routes
+router.use('/setting', settingRoutes);
+
+// Coupon routes
+router.use('/coupon', couponRoutes);
 
 module.exports = router;

@@ -10,6 +10,7 @@ import { Row, Col } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 import actions from '../../actions';
+import { trackViewContent, trackAddToCart } from '../../utils/pixel';
 import { getImageUrl } from '../../utils/image';
 
 import Input from '../../components/Common/Input';
@@ -31,11 +32,17 @@ class ProductPage extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    // Fetch new product if slug changes
     if (this.props.match.params.slug !== prevProps.match.params.slug) {
       const slug = this.props.match.params.slug;
       this.props.fetchStoreProduct(slug);
       this.props.fetchProductReviews(slug);
+    }
+    if (
+      this.props.product &&
+      this.props.product._id &&
+      (!prevProps.product || prevProps.product._id !== this.props.product._id)
+    ) {
+      trackViewContent(this.props.product);
     }
   }
 
@@ -114,7 +121,21 @@ class ProductPage extends React.PureComponent {
                         </p>
                       )}
                       <p className='item-desc'>{product.description}</p>
-                      <p className='price'>PKR {product.price}</p>
+                      {product.isOnSale && product.originalPrice > product.price ? (
+                        <div className='price-block'>
+                          <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: 14, marginRight: 8 }}>
+                            PKR {product.originalPrice}
+                          </span>
+                          <span className='price' style={{ color: '#ef4444', fontWeight: 700 }}>
+                            PKR {product.price}
+                          </span>
+                          <span className='sale-badge' style={{ marginLeft: 8, background: '#ef4444', color: '#fff', fontSize: 11, padding: '2px 8px', borderRadius: 12, fontWeight: 700 }}>
+                            SALE
+                          </span>
+                        </div>
+                      ) : (
+                        <p className='price'>PKR {product.price}</p>
+                      )}
                     </div>
                     <div className='item-customize'>
                       <Input
@@ -160,7 +181,10 @@ class ProductPage extends React.PureComponent {
                           text='Add To Bag'
                           className='bag-btn'
                           icon={<BagIcon />}
-                          onClick={() => handleAddToCart(product)}
+                          onClick={() => {
+                            trackAddToCart(product, productShopData?.quantity || 1);
+                            handleAddToCart(product);
+                          }}
                         />
                       )}
                     </div>
