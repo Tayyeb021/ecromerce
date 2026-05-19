@@ -13,29 +13,36 @@ if (!fs.existsSync(uploadsDir)) {
 // Max dimension (longest side) for product images - prevents huge uploads from breaking layout
 const PRODUCT_IMAGE_MAX_DIMENSION = 1200;
 
-// Resize image buffer if too large; returns buffer to write (resized or original)
-async function resizeImageIfNeeded(buffer, mimeType) {
+const JPEG_QUALITY = 80;
+const PNG_COMPRESSION = 8;
+const WEBP_QUALITY = 80;
+
+// Resize and compress image buffer; returns optimized buffer or original on failure
+async function optimizeImage(buffer, mimeType) {
   if (!buffer || buffer.length === 0) return buffer;
   const isImage = /^image\/(jpeg|jpg|png|webp|gif)$/i.test(mimeType || '');
   if (!isImage) return buffer;
   try {
     const sharp = require('sharp');
-    const metadata = await sharp(buffer).metadata();
-    const { width = 0, height = 0 } = metadata;
-    if (width <= PRODUCT_IMAGE_MAX_DIMENSION && height <= PRODUCT_IMAGE_MAX_DIMENSION) {
-      return buffer;
-    }
-    const resized = await sharp(buffer)
+    let pipeline = sharp(buffer)
       .resize({
         width: PRODUCT_IMAGE_MAX_DIMENSION,
         height: PRODUCT_IMAGE_MAX_DIMENSION,
         fit: 'inside',
         withoutEnlargement: true
-      })
-      .toBuffer();
-    return resized;
+      });
+
+    if (/jpeg|jpg/i.test(mimeType)) {
+      pipeline = pipeline.jpeg({ quality: JPEG_QUALITY, mozjpeg: true });
+    } else if (/png/i.test(mimeType)) {
+      pipeline = pipeline.png({ compressionLevel: PNG_COMPRESSION });
+    } else if (/webp/i.test(mimeType)) {
+      pipeline = pipeline.webp({ quality: WEBP_QUALITY });
+    }
+
+    return await pipeline.toBuffer();
   } catch (err) {
-    console.warn('Image resize skipped (using original):', err.message);
+    console.warn('Image optimization skipped (using original):', err.message);
     return buffer;
   }
 }
@@ -60,12 +67,9 @@ exports.s3Upload = async image => {
     if (image) {
       const fileName = generateFileName(image.originalname);
       const filePath = path.join(uploadsDir, fileName);
-      const bufferToWrite = await resizeImageIfNeeded(image.buffer, image.mimetype);
+      const bufferToWrite = await optimizeImage(image.buffer, image.mimetype);
 
-      // Write file to local directory (resized if it was a large image)
       fs.writeFileSync(filePath, bufferToWrite);
-      
-      // Store relative path - frontend will construct full URL
       const relativePath = `/uploads/products/${fileName}`;
       imageUrl = relativePath;
       imageKey = fileName;
@@ -85,58 +89,29 @@ exports.s3UploadMultiple = async images => {
       return [];
     }
 
-    console.log(`s3UploadMultiple: Processing ${images.length} image(s)`);
-    console.log(`s3UploadMultiple: Upload directory: ${uploadsDir}`);
-    console.log(`s3UploadMultiple: Directory exists: ${fs.existsSync(uploadsDir)}`);
-
     const uploadPromises = images.map(async (image, index) => {
       try {
-        if (!image || !image.buffer) {
-          console.error(`Image ${index}: Missing buffer`);
-          return null;
-        }
+        if (!image || !image.buffer) return null;
 
         const fileName = generateFileName(image.originalname);
         const filePath = path.join(uploadsDir, fileName);
-        const bufferToWrite = await resizeImageIfNeeded(image.buffer, image.mimetype);
+        const bufferToWrite = await optimizeImage(image.buffer, image.mimetype);
 
-        console.log(`Saving image ${index}: ${fileName} to ${filePath}`);
-
-        // Ensure directory exists
         if (!fs.existsSync(uploadsDir)) {
           fs.mkdirSync(uploadsDir, { recursive: true });
-          console.log(`Created upload directory: ${uploadsDir}`);
         }
 
-        // Write file to local directory (resized if it was a large image)
         fs.writeFileSync(filePath, bufferToWrite);
-        
-        // Verify file was written
-        if (!fs.existsSync(filePath)) {
-          console.error(`Failed to verify file write: ${filePath}`);
-          return null;
-        }
-        
-        const stats = fs.statSync(filePath);
-        console.log(`Image ${index} saved successfully: ${fileName} (${stats.size} bytes)`);
-        
-        // Store relative path - frontend will construct full URL
+
         const relativePath = `/uploads/products/${fileName}`;
-        return {
-          imageUrl: relativePath,
-          imageKey: fileName
-        };
+        return { imageUrl: relativePath, imageKey: fileName };
       } catch (error) {
-        console.error(`Error saving image ${index} locally:`, error);
-        console.error('Error stack:', error.stack);
+        console.error(`Error saving image ${index}:`, error.message);
         return null;
       }
     });
 
-    const results = await Promise.all(uploadPromises);
-    const successful = results.filter(result => result !== null);
-    console.log(`s3UploadMultiple: Successfully uploaded ${successful.length} of ${images.length} images`);
-    return successful;
+    return (await Promise.all(uploadPromises)).filter(Boolean);
   } catch (error) {
     console.error('Error in s3UploadMultiple:', error);
     console.error('Error stack:', error.stack);

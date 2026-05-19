@@ -4,6 +4,7 @@
  * This is the entry file for the application
  */
 
+import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 

@@ -76,7 +76,7 @@ const config = {
     disableHostCheck: true,
     historyApiFallback: true
   },
-  devtool: 'eval-source-map'
+  devtool: 'cheap-module-eval-source-map'
 };
 
 module.exports = webpackMerge(common, config);
